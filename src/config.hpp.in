@@ -1,0 +1,26 @@
+#ifndef __config_hpp
+#define __config_hpp
+
+#include <string>
+
+namespace mcmap
+{
+  typedef struct 
+  {
+    bool verbose;
+    std::string worldPath;
+  } config_t;
+
+  extern config_t config;
+
+  typedef struct 
+  {
+    int major;
+    int minor;
+    int patch;
+  } version_t;
+
+  extern const version_t MCMAP_VERSION = {@mcmap_VERSION_MAJOR@, @mcmap_VERSION_MINOR@, @mcmap_VERSION_PATCH@};
+}
+
+#endif
