@@ -1,5 +1,7 @@
 #include "mapper.hpp"
 
+#include <fstream>
+
 using namespace std;
 
 namespace fs = boost::filesystem;
@@ -8,7 +10,17 @@ namespace mcmap
 {
   mapper::mapper()
   {
+    this->output = fs::path(config.outputDir);
     
+    if (fs::is_regular_file(this->output))
+    {
+      cerr << "Do you even documentation?" << endl;
+    }
+
+    if (!fs::exists(this->output))
+    {
+      fs::create_directory(this->output);
+    }
   }
 
   mapper::~mapper()
@@ -59,7 +71,9 @@ namespace mcmap
 
     statistics.push_back(json_spirit::Pair("pois", this->pois()));
 
-    cout << json_spirit::write(statistics, json_spirit::pretty_print) << endl;
+    const char *filename = (this->output / "map_statistics.json").string().c_str();
+    ofstream of(filename, ofstream::out);
+    json_spirit::write(statistics, of, json_spirit::pretty_print);
   }
 
   json_spirit::Object mapper::pois()

@@ -25,6 +25,7 @@ namespace mcmap
     json_spirit::Object pois();
 
     nbt_node* level_dat;
+    boost::filesystem::path output;
   };
 }
 
