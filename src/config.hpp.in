@@ -2,6 +2,7 @@
 #define __config_hpp
 
 #include <string>
+#include <vector>
 
 namespace mcmap
 {
@@ -9,6 +10,12 @@ namespace mcmap
   {
     bool verbose;
     std::string worldPath;
+    std::vector<int> bounds;
+    int blockSize;
+    std::vector<int> zoomLevels;
+    bool tiledOutput;
+    int tileSize;
+    std::string outputDir;
   } config_t;
 
   extern config_t config;
@@ -20,7 +27,7 @@ namespace mcmap
     int patch;
   } version_t;
 
-  extern const version_t MCMAP_VERSION = {@mcmap_VERSION_MAJOR@, @mcmap_VERSION_MINOR@, @mcmap_VERSION_PATCH@};
+  const version_t MCMAP_VERSION = {@mcmap_VERSION_MAJOR@, @mcmap_VERSION_MINOR@, @mcmap_VERSION_PATCH@};
 }
 
 #endif

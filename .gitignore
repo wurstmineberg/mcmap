@@ -6,3 +6,4 @@ Makefile
 mcmap
 src/config.hpp
 Makefile
+mcmap.json

@@ -50,7 +50,11 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 add_executable(mcmap ${SOURCES})
 
-target_link_libraries(mcmap png 
-                            z 
-                            json_spirit
-                            ${Boost_PROGRAM_OPTIONS_LIBRARY})
+target_link_libraries(mcmap 
+  png 
+  z 
+  json_spirit
+  ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  ${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_SYSTEM_LIBRARY}
+)

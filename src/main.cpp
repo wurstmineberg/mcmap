@@ -1,14 +1,18 @@
 #include <iostream>
+#include <fstream>
 
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
+
 #include <json_spirit.h>
 
-
 #include "config.hpp"
+#include "mapper.hpp"
 
 using namespace std;
 using namespace mcmap;
 
+namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
 mcmap::config_t mcmap::config;
@@ -47,11 +51,68 @@ int main(int argc, char **argv)
     cout << "usage:\n\t " << argv[0] << " [-vh] worldsave" << endl;
     return 0;
   }
+
+  config.verbose = (vm.count("verbose") == 1);
+
+  // if we got this far, everything should be fine (beware, Murphy is probably somewhere around here.)
+
+  if (config.verbose)
+  {
+    cout << "This is mcmap v." 
+         << MCMAP_VERSION.major 
+         << "." 
+         << MCMAP_VERSION.minor 
+         << "." 
+         << MCMAP_VERSION.patch 
+         << endl;
+  }
+
+  mapper *m = new mapper();
 }
 
 bool load_config()
 {
   // load json config
+  fs::path p(fs::current_path());
+  p /= "mcmap.json";
+
+  if (!fs::exists(p)) return false;
+
+  ifstream in(p.string().c_str());
+  if (in.is_open())
+  {
+    json_spirit::Value cfg;
+    json_spirit::read(in, cfg);
+
+    json_spirit::Object o = cfg.get_obj();
+    for (json_spirit::Object::size_type i = 0; i != o.size(); i++)
+    {
+      const json_spirit::Pair& pair = o[i];
+
+      const string& name  = pair.name_;
+      const json_spirit::Value& value = pair.value_;
+
+      // TODO: parse full config
+
+      if (name == "world")
+      {
+        config.worldPath = value.get_str();
+      }
+
+      /*if (name == "bounds")
+      {
+        config.worldPath = value.get_vec();
+      }*/
+
+      if (name == "output")
+      {
+        // TODO: sanity check directory
+        config.outputDir = value.get_str();
+      }
+    }
+
+    return true;
+  }
   
   return false;
 }
