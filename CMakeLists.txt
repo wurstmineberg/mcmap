@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(mcmap C CXX)
 
 set(mcmap_VERSION_MAJOR 0)
-set(mcmap_VERSION_MINOR 0)
+set(mcmap_VERSION_MINOR 1)
 set(mcmap_VERSION_PATCH 1)
 
 include(CheckCXXSourceCompiles src/)
