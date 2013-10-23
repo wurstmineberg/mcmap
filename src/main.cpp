@@ -68,6 +68,7 @@ int main(int argc, char **argv)
   }
 
   mapper *m = new mapper();
+  return m->work();
 }
 
 bool load_config()

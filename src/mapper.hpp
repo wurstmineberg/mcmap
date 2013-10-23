@@ -1,6 +1,8 @@
 #ifndef __mapper_hpp
 #define __mapper_hpp
 
+#include <nbt.h>
+
 #include "config.hpp"
 
 namespace mcmap
@@ -10,8 +12,11 @@ namespace mcmap
   public:
     mapper();
     ~mapper();
+    int work();
   
     /* data */
+  private:
+    void load();
   };
 }
 
