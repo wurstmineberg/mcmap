@@ -34,11 +34,14 @@ include_directories("/usr/local/include")
 link_directories("/usr/local/lib"
                  "/usr/X11/lib")
 
-add_subdirectory(vendor/json-spirit/)
+add_subdirectory("vendor/cNBT")
+add_subdirectory("vendor/json-spirit")
 
-add_library(libnbt STATIC IMPORTED)
-set_property(TARGET libnbt PROPERTY IMPORTED_LOCATION "vendor/cNBT/libnbt.a")
+#add_library(libnbt STATIC IMPORTED)
+#set_property(TARGET libnbt PROPERTY IMPORTED_LOCATION "vendor/cNBT/libnbt.a")
+
 include_directories("vendor/cNBT/")
+link_directories("${CMAKE_SOURCE_DIR}/vendor/cNBT")
 
 set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic")
 
@@ -57,7 +60,7 @@ target_link_libraries(mcmap
   png 
   z 
   json_spirit
-  libnbt
+  nbt
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
@@ -66,3 +69,5 @@ target_link_libraries(mcmap
   ${Boost_ITERATOR_LIBRARY}
   ${Boost_IOSTREAMS_LIBRARY}
 )
+
+add_dependencies(mcmap nbt json_spirit)

@@ -1,26 +1,17 @@
 #ifndef __mapper_hpp
 #define __mapper_hpp
 
+#include <iostream>
+#include <vector>
+
+#include <boost/filesystem.hpp>
 #include <nbt.h>
+#include <json_spirit.h>
 
 #include "config.hpp"
 
 namespace mcmap
 {
-  /* save some statistics off of level.dat, might be of use. */
-  struct map_statistics
-  {
-    bool weatherRain;
-    bool weatherThunderstorm;
-    bool hasStructures;
-
-    int  spawnCoordinates;
-    long seed;
-    long timeOfDay;
-    long numberOfDaysPlayed;
-
-  };
-
   class mapper
   {
   public:
@@ -31,9 +22,9 @@ namespace mcmap
     /* data */
   private:
     void save_map_statistics();
+    json_spirit::Object pois();
 
     nbt_node* level_dat;
-    int num_regions;
   };
 }
 
