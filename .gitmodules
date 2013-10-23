@@ -1,6 +1,3 @@
 [submodule "vendor/cNBT"]
 	path = vendor/cNBT
 	url = https://github.com/FliPPeh/cNBT
-[submodule "vendor/jsonspirit"]
-	path = vendor/jsonspirit
-	url = https://github.com/sirikata/json-spirit

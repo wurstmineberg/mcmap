@@ -34,8 +34,7 @@ include_directories("/usr/local/include")
 link_directories("/usr/local/lib"
                  "/usr/X11/lib")
 
-add_library(json_spirit STATIC IMPORTED)
-set_property(TARGET json_spirit PROPERTY IMPORTED_LOCATION "/usr/local/lib/libjson_spirit.a")
+add_subdirectory(vendor/json-spirit/)
 
 add_library(libnbt STATIC IMPORTED)
 set_property(TARGET libnbt PROPERTY IMPORTED_LOCATION "vendor/cNBT/libnbt.a")
