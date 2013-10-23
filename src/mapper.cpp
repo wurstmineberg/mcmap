@@ -91,10 +91,12 @@ namespace mcmap
         json_spirit::Object player;
         player.push_back(json_spirit::Pair("name", it->path().stem().string()));
 
+        /*
+        // FIXME: this always segfaults and I don't get why
+
         json_spirit::Array playerSpawn;
         
-        nbt_node *n;
-        n = nbt_find_by_name(player_node, "SpawnX");
+        search_node = nbt_find_by_name(player_node, "SpawnX");
         playerSpawn.push_back(n->payload.tag_int);
 
         //playerSpawn.push_back(search_node->payload.tag_int);
@@ -106,6 +108,28 @@ namespace mcmap
         //playerSpawn.push_back(search_node->payload.tag_int);
 
         player.push_back(json_spirit::Pair("spawn", playerSpawn));
+        */
+
+        // dimension, 0 = overworld, 1 = end, -1 = nether
+        search_node = nbt_find_by_name(player_node, "Dimension");
+        int dimension = search_node->payload.tag_int;
+        string dimensionName;
+
+        switch (dimension)
+        {
+          case -1: dimensionName = "Nether"; break;
+          case  0: dimensionName = "Overworld"; break;
+          case  1: dimensionName = "End"; break;
+        }
+
+        player.push_back(json_spirit::Pair("dimension", dimensionName));
+
+        /*
+        // TODO: current position
+        json_spirit::Array pos;
+        nbt_node *pos_node = nbt_find_by_name(player_node, "pos");
+        struct nbt_list *pos_list = (struct nbt_list *)pos_node->payload.tag_list;
+        */
 
         player_positions.push_back(player);
       }
