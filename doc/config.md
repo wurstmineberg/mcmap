@@ -4,7 +4,6 @@ if provided via parameter or found in the current working directory as `mcmap.js
 mcmap will obey to json configuration file of the following format:
 
     {
-      "world": "~/.minecraft/saves/worldsave",
       "bounds": 
       [
         -10,
@@ -13,10 +12,16 @@ mcmap will obey to json configuration file of the following format:
         10
       ],
       "blockSize": 16,
-      "zoomLevels": [1,4,12],
+      "outputDir": "./output/",
+      "renderEnd": false,
+      "renderNether": false,
+      "renderOverworld": true,
+      "renderOverworldNight": false,
+      "saveMapStatistics": true,
       "tiledOutput": true,
       "tileSize": 128,
-      "outputDir": "./output/"
+      "world": "~/.minecraft/saves/worldsave",
+      "zoomLevels": [1,4,12]
     }
 
 ## `world`
@@ -52,3 +57,7 @@ Size of each tile, defaults to 256px * 256px.
 ## `outputDir`
 
 Output directory of generated map.
+
+## `saveMapStatistics`
+
+If true, mcmap saves some statistics of the map into $output/map_statistics.json

@@ -7,6 +7,20 @@
 
 namespace mcmap
 {
+  /* save some statistics off of level.dat, might be of use. */
+  struct map_statistics
+  {
+    bool weatherRain;
+    bool weatherThunderstorm;
+    bool hasStructures;
+
+    int  spawnCoordinates;
+    long seed;
+    long timeOfDay;
+    long numberOfDaysPlayed;
+
+  };
+
   class mapper
   {
   public:
@@ -16,7 +30,10 @@ namespace mcmap
   
     /* data */
   private:
-    void load();
+    void save_map_statistics();
+
+    nbt_node* level_dat;
+    int num_regions;
   };
 }
 

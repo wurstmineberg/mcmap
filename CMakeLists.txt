@@ -22,6 +22,7 @@ find_package(Boost 1.53
     program_options
     filesystem
     thread
+    iostreams
 
   REQUIRED)
 
@@ -41,7 +42,6 @@ set_property(TARGET libnbt PROPERTY IMPORTED_LOCATION "vendor/cNBT/libnbt.a")
 include_directories("vendor/cNBT/")
 
 set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic")
-set(CMAKE_CXX_LINK_FLAGS "")
 
 aux_source_directory(src/ SOURCES)
 

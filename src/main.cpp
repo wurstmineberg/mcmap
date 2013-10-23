@@ -82,6 +82,24 @@ bool load_config()
   ifstream in(p.string().c_str());
   if (in.is_open())
   {
+    config.blockSize            = 16;
+    config.direction            = 0; // standard north
+    config.renderEnd            = false;
+    config.renderNether         = false;
+    config.renderOverworld      = true,
+    config.renderOverworldNight = false;
+    config.outputDir            = "output/";
+    config.saveMapStatistics    = true;
+    config.tiledOutput          = false;
+    config.tileSize             = 128;
+    
+    config.bounds[0] = 0;
+    config.bounds[1] = 0;
+    config.bounds[2] = 0;
+    config.bounds[3] = 0;
+
+    config.zoomLevels[11] = 1;
+
     json_spirit::Value cfg;
     json_spirit::read(in, cfg);
 
@@ -93,22 +111,72 @@ bool load_config()
       const string& name  = pair.name_;
       const json_spirit::Value& value = pair.value_;
 
-      // TODO: parse full config
+      if (name == "blockSize")
+      {
+        config.blockSize = value.get_int();
+      }
+
+      if (name == "bounds")
+      {
+        // TODO: read array
+        json_spirit::Array bounds = value.get_array();
+      }
+
+      if (name == "direction")
+      {
+        config.direction = value.get_int();
+      }
+
+      if (name == "output")
+      {
+        // TODO: sanity check directory
+        config.outputDir = value.get_str();
+      }
+
+      if (name == "renderEnd")
+      {
+        config.renderEnd = value.get_bool();
+      }
+
+      if (name == "renderNether")
+      {
+        config.renderNether = value.get_bool();
+      }
+
+      if (name == "renderOverworld")
+      {
+        config.renderOverworld = value.get_bool();
+      }
+
+      if (name == "renderOverworldNight")
+      {
+        config.renderOverworldNight = value.get_bool();
+      }
+
+      if (name == "saveMapStatistics")
+      {
+        config.saveMapStatistics = value.get_bool();
+      }
+
+      if (name == "tiledOutput")
+      {
+        config.tiledOutput = value.get_bool();
+      }
+
+      if (name == "tileSize")
+      {
+        config.tileSize = value.get_int();
+      }
 
       if (name == "world")
       {
         config.worldPath = value.get_str();
       }
 
-      /*if (name == "bounds")
+      if (name == "zoomLevels")
       {
-        config.worldPath = value.get_vec();
-      }*/
-
-      if (name == "output")
-      {
-        // TODO: sanity check directory
-        config.outputDir = value.get_str();
+        // TODO: read array
+        json_spirit::Array zoomLevels = value.get_array();
       }
     }
 

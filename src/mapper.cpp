@@ -22,15 +22,16 @@ namespace mcmap
 
   int mapper::work()
   {
-    this->load();
+    if (config.saveMapStatistics) this->save_map_statistics();
+
     return 0;
   }
 
-  void mapper::load()
+  void mapper::save_map_statistics()
   {
-    fs::path level_dat = fs::path(config.worldPath) / "level.dat";
+    // load level.dat
+    fs::path ld_path = fs::path(config.worldPath) / "level.dat";
+    this->level_dat = nbt_parse_path(ld_path.string().c_str());
     
-    nbt_node* test = nbt_parse_path(level_dat.string().c_str());
-    cout << nbt_dump_ascii(test) << endl;
   }
 }
