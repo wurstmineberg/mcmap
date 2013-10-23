@@ -1,6 +1,3 @@
-[submodule "vendor/libnbt++"]
-	path = vendor/libnbt++
-	url = https://github.com/ljfa-ag/libnbtplusplus
 [submodule "vendor/cNBT"]
 	path = vendor/cNBT
 	url = https://github.com/FliPPeh/cNBT
