@@ -1,5 +1,12 @@
 #include "mapper.hpp"
 
+#include <boost/regex.hpp>
+
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include <fstream>
 
 using namespace std;
@@ -30,9 +37,50 @@ namespace mcmap
 
   int mapper::work()
   {
+    this->analyze_world();
     if (config.saveMapStatistics) this->save_map_statistics();
 
     return 0;
+  }
+
+  void mapper::analyze_world()
+  {
+    // TODO: do this dimension independent
+    fs::path regions_path = fs::path(config.worldPath) / "region";
+
+    this->num_regions = 0;
+
+    int max_x = 1,  max_y = 1;
+    int min_x = -1, min_y = -1;
+
+    for (fs::directory_iterator it(regions_path); it != fs::directory_iterator(); ++it)
+    {
+      // calculate region coordinates
+      this->num_regions++;
+      
+      string regionIdent = it->path().stem().string().substr(2);
+      
+      size_t dot = regionIdent.find(".");
+      
+      string xStr = regionIdent.substr(0, dot);
+      string yStr = regionIdent.substr(++dot);
+
+      int x = atoi(xStr.c_str());
+      int y = atoi(yStr.c_str());
+
+      if (x > max_x) max_x = x;
+      if (x < min_x) min_x = x;
+
+      if (y > max_y) max_y = y;
+      if (y < min_y) min_y = y;
+
+      // cache region path
+      region_t r = {fs::path(it->path()), x, y, fs::file_size(it->path())};
+      this->regions.push_back(r);
+    }
+
+    this->max_x_dimension = abs(min_x) + abs(max_x);
+    this->max_y_dimension = abs(min_y) + abs(max_y);
   }
 
   void mapper::save_map_statistics()
@@ -71,6 +119,9 @@ namespace mcmap
 
     statistics.push_back(json_spirit::Pair("pois", this->pois()));
 
+
+
+    // save json
     const char *filename = (this->output / "map_statistics.json").string().c_str();
     ofstream of(filename, ofstream::out);
     json_spirit::write(statistics, of, json_spirit::pretty_print);
