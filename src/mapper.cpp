@@ -37,16 +37,28 @@ namespace mcmap
 
   int mapper::work()
   {
+    if (config.renderOverworld) this->analyze_world(DIMENSION_OVERWORLD);
+    if (config.renderNether)    this->analyze_world(DIMENSION_NETHER);
+    if (config.renderEnd)       this->analyze_world(DIMENSION_END);
+
     this->analyze_world();
     if (config.saveMapStatistics) this->save_map_statistics();
 
     return 0;
   }
 
-  void mapper::analyze_world()
+  void mapper::analyze_world(mapper_dimension_t dim)
   {
-    // TODO: do this dimension independent
-    fs::path regions_path = fs::path(config.worldPath) / "region";
+    string dimension_storage = "";
+    
+    switch (this->mapper_dimension)
+    {
+      case DIMENSION_OVERWORLD: dim = "region"; break;
+      case DIMENSION_NETHER   : dim = "DIM-1"; break;
+      case DIMENSION_END      : dim = "DIM1"; break;
+    }
+
+    fs::path regions_path = fs::path(config.worldPath) / dimension_storage;
 
     this->num_regions = 0;
 

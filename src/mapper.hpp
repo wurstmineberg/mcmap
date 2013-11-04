@@ -12,6 +12,13 @@
 
 namespace mcmap
 {
+  typedef enum mapper_dimension_t 
+  {
+    DIMENSION_OVERWORLD,
+    DIMENSION_NETHER,
+    DIMENSION_END
+  };
+
   typedef struct region
   {
     boost::filesystem::path regionPath;
@@ -23,7 +30,7 @@ namespace mcmap
   class mapper
   {
   public:
-    mapper();
+    mapper(mapper_dimension_t dim);
     ~mapper();
     int work();
   
