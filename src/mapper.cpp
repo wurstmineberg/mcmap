@@ -37,30 +37,36 @@ namespace mcmap
 
   int mapper::work()
   {
-    if (config.renderOverworld) this->analyze_world(DIMENSION_OVERWORLD);
-    if (config.renderNether)    this->analyze_world(DIMENSION_NETHER);
-    if (config.renderEnd)       this->analyze_world(DIMENSION_END);
+    if (config.renderOverworld) 
+      this->overworld = this->analyze_world(DIMENSION_OVERWORLD);
+    
+    if (config.renderNether)    
+      this->nether = this->analyze_world(DIMENSION_NETHER);
+    
+    if (config.renderEnd)       
+      this->end = this->analyze_world(DIMENSION_END);
 
-    this->analyze_world();
     if (config.saveMapStatistics) this->save_map_statistics();
 
     return 0;
   }
 
-  void mapper::analyze_world(mapper_dimension_t dim)
+  dimension_t *mapper::analyze_world(mapper_dimension_t dim)
   {
+    dimension_t *dimension = new dimension_t;
+
     string dimension_storage = "";
     
-    switch (this->mapper_dimension)
+    switch (dim)
     {
-      case DIMENSION_OVERWORLD: dim = "region"; break;
-      case DIMENSION_NETHER   : dim = "DIM-1"; break;
-      case DIMENSION_END      : dim = "DIM1"; break;
+      case DIMENSION_OVERWORLD: dimension_storage = "region"; break;
+      case DIMENSION_NETHER   : dimension_storage = "DIM-1"; break;
+      case DIMENSION_END      : dimension_storage = "DIM1"; break;
     }
 
     fs::path regions_path = fs::path(config.worldPath) / dimension_storage;
 
-    this->num_regions = 0;
+    dimension->num_regions = 0;
 
     int max_x = 1,  max_y = 1;
     int min_x = -1, min_y = -1;
@@ -68,7 +74,7 @@ namespace mcmap
     for (fs::directory_iterator it(regions_path); it != fs::directory_iterator(); ++it)
     {
       // calculate region coordinates
-      this->num_regions++;
+      dimension->num_regions++;
       
       string regionIdent = it->path().stem().string().substr(2);
       
@@ -86,13 +92,15 @@ namespace mcmap
       if (y > max_y) max_y = y;
       if (y < min_y) min_y = y;
 
-      // cache region path
+      // cache region path and meta information
       region_t r = {fs::path(it->path()), x, y, fs::file_size(it->path())};
-      this->regions.push_back(r);
+      dimension->regions.push_back(r);
     }
 
-    this->max_x_dimension = abs(min_x) + abs(max_x);
-    this->max_y_dimension = abs(min_y) + abs(max_y);
+    dimension->max_x_extent = abs(min_x) + abs(max_x);
+    dimension->max_y_extent = abs(min_y) + abs(max_y);
+
+    return dimension;
   }
 
   void mapper::save_map_statistics()
