@@ -99,22 +99,49 @@ namespace mcmap
       int x = atoi(xStr.c_str());
       int y = atoi(yStr.c_str());
 
-      if (x > max_x) max_x = x;
-      if (x < min_x) min_x = x;
+      // check if the region is in the requested chunk boundary...
+      bool in_chunk_boundary = false;
 
-      if (y > max_y) max_y = y;
-      if (y < min_y) min_y = y;
+      if ((config.bounds[0] == 0) || (config.bounds[1] == 0)
+      ||  (config.bounds[2] == 0) || (config.bounds[3] == 0)) 
+      {
+        // if any of the bounds is zero, all are assumed zero..
+        in_chunk_boundary = true;
+      } else
+      {
+        // else calculate the required regions
+        int min_requiredX = config.bounds[3] >> 5; // SE
+        int max_requiredX = config.bounds[0] >> 5; // NE
 
-      // cache region path and meta information
-      region_t r = 
-      { 
-        x, 
-        y, 
-        fs::file_size(it->path()), 
-        new region_map(fs::path(it->path()))
-      };
+        int min_requiredY = config.bounds[2] >> 5; // SW
+        int max_requiredY = config.bounds[1] >> 5; // NW
 
-      dimension->regions.push_back(r);
+        if ((x < min_requiredX) || (x > max_requiredX)) in_chunk_boundary = false;
+        if ((y < min_requiredY) || (y > max_requiredY)) in_chunk_boundary = false;
+
+        in_chunk_boundary = true;
+      }
+
+      // if so, do stuffs with it
+      if (in_chunk_boundary)
+      {
+        if (x > max_x) max_x = x;
+        if (x < min_x) min_x = x;
+
+        if (y > max_y) max_y = y;
+        if (y < min_y) min_y = y;
+
+        // cache region path and meta information
+        region_t r = 
+        { 
+          x, 
+          y, 
+          fs::file_size(it->path()), 
+          new region_map(fs::path(it->path()))
+        };
+
+        dimension->regions.push_back(r);
+      }
     }
 
     dimension->max_x_extent = abs(min_x) + abs(max_x);
@@ -159,6 +186,14 @@ namespace mcmap
 
     statistics.push_back(js::Pair("pois", this->pois()));
 
+
+    // save json for main stats
+    const char *filename = (this->output / "map_statistics.json").string().c_str();
+    ofstream of(filename, ofstream::out);
+    js::write(statistics, of, js::pretty_print);
+    of.close();
+
+    js::Object region_statistics;
     if (config.renderOverworld || config.renderNether || config.renderEnd)
     {
       js::Array dim;
@@ -172,13 +207,13 @@ namespace mcmap
       if (config.renderEnd)
         dim.push_back(this->dimension_data(DIMENSION_END));
 
-      statistics.push_back(js::Pair("dimensions", dim));
+      region_statistics.push_back(js::Pair("dimensions", dim));
     }
 
-    // save json
-    const char *filename = (this->output / "map_statistics.json").string().c_str();
-    ofstream of(filename, ofstream::out);
-    js::write(statistics, of, js::pretty_print);
+    const char *region_filename = (this->output / "region_statistics.json").string().c_str();
+    ofstream of2(region_filename, ofstream::out);
+    js::write(region_statistics, of2, js::pretty_print);
+    of2.close();
   }
 
   js::Object mapper::pois()

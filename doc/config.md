@@ -34,6 +34,9 @@ The world save to process. mcmap can process raw saves and the following compres
 ## `bounds`
 
 The chunk range boundaries to map. Expected order is { NE, NW, SE, SW }.
+If any of the values is zero, all values are assumed zero.
+
+A value of zero leads to the mapping of the whole world.
 
 ## `blockSize`
 
@@ -61,3 +64,4 @@ Output directory of generated map.
 ## `saveMapStatistics`
 
 If true, mcmap saves some statistics of the map into $output/map_statistics.json
+and $output/region_statistics.json

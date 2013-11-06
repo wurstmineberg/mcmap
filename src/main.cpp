@@ -129,7 +129,7 @@ bool load_config()
         config.direction = value.get_int();
       }
 
-      if (name == "output")
+      if (name == "outputDir")
       {
         // TODO: sanity check directory
         config.outputDir = value.get_str();
