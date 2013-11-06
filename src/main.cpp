@@ -79,6 +79,8 @@ bool load_config()
 
   if (!fs::exists(p)) return false;
 
+  cout << "Using config " << p << endl;
+
   ifstream in(p.string().c_str());
   if (in.is_open())
   {
