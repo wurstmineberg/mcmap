@@ -10,6 +10,8 @@
 
 #include "config.hpp"
 
+#include "region_map.hpp"
+
 namespace mcmap
 {
   typedef enum mapper_dimension 
@@ -21,10 +23,10 @@ namespace mcmap
 
   typedef struct region
   {
-    boost::filesystem::path regionPath;
     int regionX;
     int regionY;
     long filesize;
+    region_map *map;
   } region_t;
 
   typedef struct dimension

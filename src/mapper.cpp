@@ -22,6 +22,7 @@ namespace mcmap
     if (fs::is_regular_file(this->output))
     {
       cerr << "Do you even documentation?" << endl;
+      exit(1);
     }
 
     if (!fs::exists(this->output))
@@ -93,7 +94,14 @@ namespace mcmap
       if (y < min_y) min_y = y;
 
       // cache region path and meta information
-      region_t r = {fs::path(it->path()), x, y, fs::file_size(it->path())};
+      region_t r = 
+      { 
+        x, 
+        y, 
+        fs::file_size(it->path()), 
+        new region_map(fs::path(it->path()))
+      };
+
       dimension->regions.push_back(r);
     }
 
@@ -138,8 +146,6 @@ namespace mcmap
     statistics.push_back(json_spirit::Pair("isThunderstorm", (bool)search_node->payload.tag_byte));
 
     statistics.push_back(json_spirit::Pair("pois", this->pois()));
-
-
 
     // save json
     const char *filename = (this->output / "map_statistics.json").string().c_str();
