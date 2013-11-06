@@ -36,8 +36,6 @@ namespace mcmap
     
     this->context.seekg(0, ios::beg);
 
-    cout << this->filename << endl;
-
     // need only a four byte buffer for all of the analyzing
     char *buffer = (char *)malloc(sizeof(char) * 4);
 
@@ -53,15 +51,25 @@ namespace mcmap
       chunk_info->offset = location >> 8;
       chunk_info->size   = location & 0xff;
 
-      this->chunk_infos.push_back(chunk_info);
+      if (chunk_info->offset > 0)
+      {
+        // chunks with offset == 0 are not generated yet and thus don't need to be mapped
+
+        this->chunk_infos.push_back(chunk_info);
+      }
     }
 
     for (int i = SECTOR_INTS; i < SECTOR_INTS * 2; i++)
     {
-      r_chunk_info_t *chunk_info = this->chunk_infos.at(i - SECTOR_INTS);
+      int idx = i - SECTOR_INTS;
+      
+      if (idx < this->chunk_infos.size())
+      {
+        r_chunk_info_t *chunk_info = this->chunk_infos.at(i - SECTOR_INTS);
 
-      this->context.read(buffer, 4); 
-      chunk_info->timestamp = ntohl(*((int *)buffer));
+        this->context.read(buffer, 4); 
+        chunk_info->timestamp = ntohl(*((int *)buffer));
+      } else break;
     }
 
     /*
@@ -75,6 +83,6 @@ namespace mcmap
 
   float region_map::saturation()
   {
-    return (float)(this->chunk_infos.size() / CHUNKS_PER_REGION);
+    return (float)this->chunk_infos.size() / (float)CHUNKS_PER_REGION;
   }
 }

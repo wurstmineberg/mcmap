@@ -102,6 +102,8 @@ namespace mcmap
         new region_map(fs::path(it->path()))
       };
 
+      cout << it->path() << ": " << r.map->saturation() << endl;
+
       dimension->regions.push_back(r);
     }
 

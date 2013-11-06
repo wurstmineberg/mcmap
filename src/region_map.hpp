@@ -21,7 +21,7 @@ namespace mcmap
   {
     int offset;
     int size;
-    
+
     int timestamp;
   } r_chunk_info_t;
 
@@ -38,7 +38,7 @@ namespace mcmap
 
     boost::filesystem::path filename;
     std::vector<r_chunk_info_t *> chunk_infos;
-    std::vector<chunk_map>        chunk_maps;
+    std::vector<mcmap::chunk_map>        chunk_maps;
 
     std::ifstream context;
   };
