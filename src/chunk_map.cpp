@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
+#include <stdint.h>
 
 using namespace std;
 
@@ -33,6 +35,21 @@ namespace mcmap
 
   void chunk_map::map()
   {
+    nbt_node *search_node;
+
+    // chunk x,z
+    search_node = nbt_find_by_name(this->data, "xPos");
+    this->chunkX = search_node->payload.tag_int;
+
+    search_node = nbt_find_by_name(this->data, "zPos");
+    this->chunkZ = search_node->payload.tag_int;
     
+    // biome data
+    search_node = nbt_find_by_name(this->data, "Biomes");
+    for (int i = 0; i < search_node->payload.tag_byte_array.length; i++)
+    {
+      int x = i % 16, z = (i / 16);
+      this->biome[x][z] = (int)(search_node->payload.tag_byte_array.data)[i];
+    }
   }
 }

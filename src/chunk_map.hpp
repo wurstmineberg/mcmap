@@ -1,6 +1,7 @@
 #ifndef __chunk_map_hpp
 #define __chunk_map_hpp
 
+#include <boost/filesystem.hpp>
 #include <nbt.h>
 
 #define CHUNK_COMPRESSION_GZIP 1
@@ -19,6 +20,12 @@ namespace mcmap
     nbt_node *load(void *chunk_data);
 
     nbt_node *data;
+    boost::filesystem::path tile_filename;
+
+    int chunkX;
+    int chunkZ;
+
+    int biome[16][16];
   };
 }
 
