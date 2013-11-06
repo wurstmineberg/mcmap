@@ -24,20 +24,11 @@ int main(int argc, char **argv)
   po::options_description input_options("options");
   input_options.add_options()
     ("help,h", "display this help")
-    ("verbose,v", "enable verbose output");
-
-  po::options_description invisible_options("invisbles");
-  invisible_options.add_options()
-    ("world", po::value<string>(&config.worldPath), "The Minecraft world save you want to map.");
-
-  po::options_description all("all");
-  all.add(input_options).add(invisible_options);
-
-  po::positional_options_description positionals;
-  positionals.add("world", 1);
+    ("verbose,v", "enable verbose output")
+    ("version", "display version information and quit");
 
   po::variables_map vm;
-  po::store(po::command_line_parser(argc,argv).options(all).positional(positionals).run(), vm);
+  po::store(po::command_line_parser(argc,argv).options(input_options).run(), vm);
 
   if (vm.count("help"))
   {
@@ -45,18 +36,9 @@ int main(int argc, char **argv)
     return 0;  
   }
 
-  // display simple usage output if no world save was supplied
-  if (!load_config() || config.worldPath.length() == 0)
-  {
-    cout << "usage:\n\t " << argv[0] << " [-vh] worldsave" << endl;
-    return 0;
-  }
-
   config.verbose = (vm.count("verbose") == 1);
 
-  // if we got this far, everything should be fine (beware, Murphy is probably somewhere around here.)
-
-  if (config.verbose)
+  if (config.verbose || vm.count("version") == 1)
   {
     cout << "This is mcmap v." 
          << MCMAP_VERSION.major 
@@ -65,7 +47,18 @@ int main(int argc, char **argv)
          << "." 
          << MCMAP_VERSION.patch 
          << endl;
+
+    if (vm.count("version") == 1) exit(0);
   }
+
+  // display simple usage output if no config was supplied
+  if (!load_config())
+  {
+    cout << "usage:\n\t " << argv[0] << " [-vh]" << endl;
+    return 0;
+  }
+
+  // if we got this far, everything should be fine (beware, Murphy is probably somewhere around here.)
 
   mapper *m = new mapper();
   return m->work();
@@ -79,7 +72,7 @@ bool load_config()
 
   if (!fs::exists(p)) return false;
 
-  cout << "Using config " << p << endl;
+  if (config.verbose) cout << "Using config " << p << endl;
 
   ifstream in(p.string().c_str());
   if (in.is_open())
@@ -88,9 +81,9 @@ bool load_config()
     config.direction            = 0; // standard north
     config.renderEnd            = false;
     config.renderNether         = false;
-    config.renderOverworld      = true,
+    config.renderOverworld      = false,
     config.renderOverworldNight = false;
-    config.outputDir            = "output/";
+    config.outputDir            = fs::path("output/");
     config.saveMapStatistics    = true;
     config.tiledOutput          = false;
     config.tileSize             = 128;
@@ -131,8 +124,7 @@ bool load_config()
 
       if (name == "outputDir")
       {
-        // TODO: sanity check directory
-        config.outputDir = value.get_str();
+        config.outputDir = fs::path(value.get_str());
       }
 
       if (name == "renderEnd")
@@ -172,7 +164,7 @@ bool load_config()
 
       if (name == "world")
       {
-        config.worldPath = value.get_str();
+        config.worldPath = fs::path(value.get_str());
       }
 
       if (name == "zoomLevels")
@@ -180,6 +172,15 @@ bool load_config()
         // TODO: read array
         json_spirit::Array zoomLevels = value.get_array();
       }
+    }
+
+    // default to overworld if no render mode was selected
+    if (!config.renderOverworld 
+    &&  !config.renderOverworldNight 
+    &&  !config.renderNether 
+    &&  !config.renderEnd)
+    {
+      config.renderOverworld = true;
     }
 
     return true;

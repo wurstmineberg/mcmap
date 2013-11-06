@@ -50,6 +50,8 @@ namespace mcmap
     /* data */
   private:
     dimension_t *analyze_world(mapper_dimension_t dim);
+    void map(mapper_dimension_t dim);
+    dimension_t *get_dimension(mapper_dimension_t dim);
     
     void save_map_statistics();
     

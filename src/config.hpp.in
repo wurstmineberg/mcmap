@@ -3,24 +3,26 @@
 
 #include <string>
 
+#include <boost/filesystem.hpp>
+
 namespace mcmap
 {
   typedef struct 
   {
-    int         bounds[4];
-    int         blockSize;
-    int         direction;
-    std::string outputDir;
-    bool        renderEnd;
-    bool        renderNether;
-    bool        renderOverworld;
-    bool        renderOverworldNight;
-    bool        saveMapStatistics;
-    bool        tiledOutput;
-    int         tileSize;
-    bool        verbose;
-    std::string worldPath;
-    int         zoomLevels[12];
+    int                     bounds[4];
+    int                     blockSize;
+    int                     direction;
+    boost::filesystem::path outputDir;
+    bool                    renderEnd;
+    bool                    renderNether;
+    bool                    renderOverworld;
+    bool                    renderOverworldNight;
+    bool                    saveMapStatistics;
+    bool                    tiledOutput;
+    int                     tileSize;
+    bool                    verbose;
+    boost::filesystem::path worldPath;
+    int                     zoomLevels[12];
   } config_t;
 
   extern config_t config;

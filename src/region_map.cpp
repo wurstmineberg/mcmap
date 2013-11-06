@@ -11,10 +11,15 @@ namespace fs = boost::filesystem;
 
 namespace mcmap
 {
-  region_map::region_map(fs::path region_filename)
+  region_map::region_map(fs::path region_filename, int regionX, int regionY)
   {
     this->filename = region_filename;
+    
     this->context.open(this->filename.string().c_str(), ios::binary);
+
+    this->regionX = regionX;
+    this->regionY = regionY;
+
     this->analyze();
   }
 
@@ -88,6 +93,39 @@ namespace mcmap
 
   void region_map::map()
   {
-    // first of all: map all chunks
+    // create and change into directory for region
+    char *a = (char *)malloc(sizeof(char) * 12);
+    sprintf(a, "%d/%d", this->regionX, this->regionY);
+
+    char *regDirs = (char *)malloc(sizeof(char) * strlen(a));
+    memcpy(regDirs, a, strlen(a));
+
+    free(a);
+
+    fs::path p(fs::current_path() / regDirs);
+    fs::create_directories(p);
+
+    chdir(p.string().c_str());
+
+    free(regDirs);
+
+    // FIXME: this should be multi-threaded
+
+    for (std::vector<r_chunk_info_t *>::iterator it = this->chunk_infos.begin(); it < this->chunk_infos.end(); ++it)
+    {
+      // allocate memory for the current chunk
+      void *chunk_data = (void *)malloc((*it)->size * SECTOR_BYTES);
+      
+      // read chunk data into memory section
+      this->context.seekg((*it)->offset * SECTOR_BYTES);
+      this->context.read((char *)chunk_data, (*it)->size * SECTOR_BYTES);
+
+      chunk_map cm(chunk_data);
+      cm.map();
+
+      free(chunk_data);
+
+      exit(0);
+    }
   }
 }

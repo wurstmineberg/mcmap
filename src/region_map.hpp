@@ -28,7 +28,7 @@ namespace mcmap
   class region_map
   {
   public:
-    region_map(boost::filesystem::path region_filename);
+    region_map(boost::filesystem::path region_filename, int regionX, int regionY);
     ~region_map();
 
     float saturation();
@@ -39,9 +39,13 @@ namespace mcmap
 
     boost::filesystem::path filename;
     std::vector<r_chunk_info_t *> chunk_infos;
-    std::vector<mcmap::chunk_map>        chunk_maps;
+    
+    //std::vector<mcmap::chunk_map> chunk_maps;
 
     std::ifstream context;
+
+    int regionX;
+    int regionY;
   };
 }
 
