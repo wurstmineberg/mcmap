@@ -12,6 +12,8 @@ namespace mcmap
     chunk_map(void *chunk_data);
     ~chunk_map();
 
+    void map();
+
   private:
     void *data;
   };

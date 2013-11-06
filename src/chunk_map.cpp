@@ -13,4 +13,9 @@ namespace mcmap
   {
     free(data);
   }
+
+  void chunk_map::map()
+  {
+    
+  }
 }

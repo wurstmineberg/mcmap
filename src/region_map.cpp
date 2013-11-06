@@ -85,4 +85,9 @@ namespace mcmap
   {
     return (float)this->chunk_infos.size() / (float)CHUNKS_PER_REGION;
   }
+
+  void region_map::map()
+  {
+    // first of all: map all chunks
+  }
 }

@@ -32,6 +32,7 @@ namespace mcmap
     ~region_map();
 
     float saturation();
+    void  map();
 
   private:
     void analyze();
