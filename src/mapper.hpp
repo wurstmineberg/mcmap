@@ -24,7 +24,7 @@ namespace mcmap
   typedef struct region
   {
     int regionX;
-    int regionY;
+    int regionZ;
     long filesize;
     region_map *map;
   } region_t;
@@ -35,7 +35,7 @@ namespace mcmap
 
     int num_regions;
     int max_x_extent;
-    int max_y_extent;
+    int max_z_extent;
 
     std::vector<region_t> regions;    
   } dimension_t;

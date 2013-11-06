@@ -11,14 +11,14 @@ namespace fs = boost::filesystem;
 
 namespace mcmap
 {
-  region_map::region_map(fs::path region_filename, int regionX, int regionY)
+  region_map::region_map(fs::path region_filename, int regionX, int regionZ)
   {
     this->filename = region_filename;
     
     this->context.open(this->filename.string().c_str(), ios::binary);
 
     this->regionX = regionX;
-    this->regionY = regionY;
+    this->regionZ = regionZ;
 
     this->analyze();
   }
@@ -80,7 +80,9 @@ namespace mcmap
     /*
       we could read all the chunk headers now to get their exact length and
       compression scheme (which should be zlib all the time, otherwise
-      someone messed with the map in a way they should not have)
+      someone messed with the map in a way they should not have),
+      but in order to consume as little memory as possible, this is
+      done on the fly while processing the chunks in the mapping stage.
     */
 
     free(buffer);
@@ -95,7 +97,7 @@ namespace mcmap
   {
     // create and change into directory for region
     char *a = (char *)malloc(sizeof(char) * 12);
-    sprintf(a, "%d/%d", this->regionX, this->regionY);
+    sprintf(a, "%d/%d", this->regionX, this->regionZ);
 
     char *regDirs = (char *)malloc(sizeof(char) * strlen(a));
     memcpy(regDirs, a, strlen(a));

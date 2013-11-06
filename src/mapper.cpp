@@ -95,8 +95,8 @@ namespace mcmap
 
     dimension->num_regions = 0;
 
-    int max_x = 1,  max_y = 1;
-    int min_x = -1, min_y = -1;
+    int max_x = 1,  max_z = 1;
+    int min_x = -1, min_z = -1;
 
     for (fs::directory_iterator it(regions_path); it != fs::directory_iterator(); ++it)
     {
@@ -108,10 +108,10 @@ namespace mcmap
       size_t dot = regionIdent.find(".");
       
       string xStr = regionIdent.substr(0, dot);
-      string yStr = regionIdent.substr(++dot);
+      string zStr = regionIdent.substr(++dot);
 
       int x = atoi(xStr.c_str());
-      int y = atoi(yStr.c_str());
+      int z = atoi(zStr.c_str());
 
       // check if the region is in the requested chunk boundary...
       bool in_chunk_boundary = false;
@@ -127,11 +127,11 @@ namespace mcmap
         int min_requiredX = config.bounds[3] >> 5; // SE
         int max_requiredX = config.bounds[0] >> 5; // NE
 
-        int min_requiredY = config.bounds[2] >> 5; // SW
-        int max_requiredY = config.bounds[1] >> 5; // NW
+        int min_requiredZ = config.bounds[2] >> 5; // SW
+        int max_requiredZ = config.bounds[1] >> 5; // NW
 
         if ((x < min_requiredX) || (x > max_requiredX)) in_chunk_boundary = false;
-        if ((y < min_requiredY) || (y > max_requiredY)) in_chunk_boundary = false;
+        if ((z < min_requiredZ) || (z > max_requiredZ)) in_chunk_boundary = false;
 
         in_chunk_boundary = true;
       }
@@ -142,16 +142,16 @@ namespace mcmap
         if (x > max_x) max_x = x;
         if (x < min_x) min_x = x;
 
-        if (y > max_y) max_y = y;
-        if (y < min_y) min_y = y;
+        if (z > max_z) max_z = z;
+        if (z < min_z) min_z = z;
 
         // cache region path and meta information
         region_t r = 
         { 
           x, 
-          y, 
+          z, 
           fs::file_size(it->path()), 
-          new region_map(fs::path(it->path()), x, y)
+          new region_map(fs::path(it->path()), x, z)
         };
 
         dimension->regions.push_back(r);
@@ -159,7 +159,7 @@ namespace mcmap
     }
 
     dimension->max_x_extent = abs(min_x) + abs(max_x);
-    dimension->max_y_extent = abs(min_y) + abs(max_y);
+    dimension->max_z_extent = abs(min_z) + abs(max_z);
 
     return dimension;
   }
@@ -335,7 +335,7 @@ namespace mcmap
     obj.push_back(js::Pair("num_regions", dimension->num_regions));
 
     obj.push_back(js::Pair("max_x_extent", dimension->max_x_extent));
-    obj.push_back(js::Pair("max_y_extent", dimension->max_y_extent));
+    obj.push_back(js::Pair("max_y_extent", dimension->max_z_extent));
 
     js::Array regions;
     float overall_saturation = 0;
@@ -346,7 +346,7 @@ namespace mcmap
       js::Object region;
 
       region.push_back(js::Pair("regionX", current->regionX));
-      region.push_back(js::Pair("regionY", current->regionY));
+      region.push_back(js::Pair("regionZ", current->regionZ));
 
       region.push_back(js::Pair("saturation", current->map->saturation()));
 

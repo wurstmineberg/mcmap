@@ -28,7 +28,7 @@ namespace mcmap
   class region_map
   {
   public:
-    region_map(boost::filesystem::path region_filename, int regionX, int regionY);
+    region_map(boost::filesystem::path region_filename, int regionX, int regionZ);
     ~region_map();
 
     float saturation();
@@ -45,7 +45,7 @@ namespace mcmap
     std::ifstream context;
 
     int regionX;
-    int regionY;
+    int regionZ;
   };
 }
 
