@@ -12,6 +12,7 @@
 using namespace std;
 
 namespace fs = boost::filesystem;
+namespace js = json_spirit;
 
 namespace mcmap
 {
@@ -60,9 +61,20 @@ namespace mcmap
     
     switch (dim)
     {
-      case DIMENSION_OVERWORLD: dimension_storage = "region"; break;
-      case DIMENSION_NETHER   : dimension_storage = "DIM-1"; break;
-      case DIMENSION_END      : dimension_storage = "DIM1"; break;
+      case DIMENSION_OVERWORLD: 
+        dimension->name   = "Overworld";
+        dimension_storage = "region"; 
+        break;
+
+      case DIMENSION_NETHER: 
+        dimension->name   = "Nether";
+        dimension_storage = "DIM-1"; 
+        break;
+
+      case DIMENSION_END: 
+        dimension->name    = "End";
+        dimension_storage = "DIM1"; 
+        break;
     }
 
     fs::path regions_path = fs::path(config.worldPath) / dimension_storage;
@@ -102,8 +114,6 @@ namespace mcmap
         new region_map(fs::path(it->path()))
       };
 
-      cout << it->path() << ": " << r.map->saturation() << endl;
-
       dimension->regions.push_back(r);
     }
 
@@ -118,13 +128,13 @@ namespace mcmap
     fs::path ld_path = fs::path(config.worldPath) / "level.dat";
     this->level_dat = nbt_parse_path(ld_path.string().c_str());
     
-    json_spirit::Object statistics;
+    js::Object statistics;
     nbt_node *search_node = nbt_find_by_name(this->level_dat, "LevelName");
     
-    statistics.push_back(json_spirit::Pair("worldName", search_node->payload.tag_string));
+    statistics.push_back(js::Pair("worldName", search_node->payload.tag_string));
 
     search_node = nbt_find_by_name(this->level_dat, "RandomSeed");
-    statistics.push_back(json_spirit::Pair("worldSeed", search_node->payload.tag_long));
+    statistics.push_back(js::Pair("worldSeed", search_node->payload.tag_long));
 
     // Some notes on time in minecraft...
     //
@@ -138,27 +148,43 @@ namespace mcmap
     int days = (int)(age / 24000);
     int current_time = (int)(age % 24000);
 
-    statistics.push_back(json_spirit::Pair("currentTimeOfDay", current_time));
-    statistics.push_back(json_spirit::Pair("numberOfDaysPlayed", days));
+    statistics.push_back(js::Pair("currentTimeOfDay", current_time));
+    statistics.push_back(js::Pair("numberOfDaysPlayed", days));
 
     search_node = nbt_find_by_name(this->level_dat, "raining");
-    statistics.push_back(json_spirit::Pair("currentlyRaining", (bool)search_node->payload.tag_byte));
+    statistics.push_back(js::Pair("currentlyRaining", (bool)search_node->payload.tag_byte));
 
     search_node = nbt_find_by_name(this->level_dat, "thundering");
-    statistics.push_back(json_spirit::Pair("isThunderstorm", (bool)search_node->payload.tag_byte));
+    statistics.push_back(js::Pair("isThunderstorm", (bool)search_node->payload.tag_byte));
 
-    statistics.push_back(json_spirit::Pair("pois", this->pois()));
+    statistics.push_back(js::Pair("pois", this->pois()));
+
+    if (config.renderOverworld || config.renderNether || config.renderEnd)
+    {
+      js::Array dim;
+
+      if (config.renderOverworld)
+        dim.push_back(this->dimension_data(DIMENSION_OVERWORLD));
+
+      if (config.renderNether)
+        dim.push_back(this->dimension_data(DIMENSION_NETHER));
+
+      if (config.renderEnd)
+        dim.push_back(this->dimension_data(DIMENSION_END));
+
+      statistics.push_back(js::Pair("dimensions", dim));
+    }
 
     // save json
     const char *filename = (this->output / "map_statistics.json").string().c_str();
     ofstream of(filename, ofstream::out);
-    json_spirit::write(statistics, of, json_spirit::pretty_print);
+    js::write(statistics, of, js::pretty_print);
   }
 
-  json_spirit::Object mapper::pois()
+  js::Object mapper::pois()
   {
-    json_spirit::Array spawn, player_positions;
-    json_spirit::Object pois;
+    js::Array spawn, player_positions;
+    js::Object pois;
     
     nbt_node *search_node;
 
@@ -171,7 +197,7 @@ namespace mcmap
     search_node = nbt_find_by_name(this->level_dat, "SpawnZ");
     spawn.push_back(search_node->payload.tag_int);
 
-    pois.push_back(json_spirit::Pair("spawn", spawn));
+    pois.push_back(js::Pair("spawn", spawn));
 
     // traverse through player files...
     fs::path players = fs::path(config.worldPath) / "players";
@@ -181,13 +207,13 @@ namespace mcmap
       if (it->path().extension() == ".dat")
       {
         nbt_node *player_node = nbt_parse_path(it->path().string().c_str());
-        json_spirit::Object player;
-        player.push_back(json_spirit::Pair("name", it->path().stem().string()));
+        js::Object player;
+        player.push_back(js::Pair("name", it->path().stem().string()));
 
         /*
         // FIXME: this always segfaults and I don't get why
 
-        json_spirit::Array playerSpawn;
+        js::Array playerSpawn;
         
         search_node = nbt_find_by_name(player_node, "SpawnX");
         playerSpawn.push_back(n->payload.tag_int);
@@ -200,7 +226,7 @@ namespace mcmap
         //search_node = nbt_find_by_name(player_node, "SpawnZ");
         //playerSpawn.push_back(search_node->payload.tag_int);
 
-        player.push_back(json_spirit::Pair("spawn", playerSpawn));
+        player.push_back(js::Pair("spawn", playerSpawn));
         */
 
         // dimension, 0 = overworld, 1 = end, -1 = nether
@@ -210,16 +236,16 @@ namespace mcmap
 
         switch (dimension)
         {
-          case -1: dimensionName = "Nether"; break;
-          case  0: dimensionName = "Overworld"; break;
-          case  1: dimensionName = "End"; break;
+          case DIMENSION_NETHER:    dimensionName = "Nether"; break;
+          case DIMENSION_OVERWORLD: dimensionName = "Overworld"; break;
+          case DIMENSION_END:       dimensionName = "End"; break;
         }
 
-        player.push_back(json_spirit::Pair("dimension", dimensionName));
+        player.push_back(js::Pair("dimension", dimensionName));
 
         /*
         // TODO: current position
-        json_spirit::Array pos;
+        js::Array pos;
         nbt_node *pos_node = nbt_find_by_name(player_node, "pos");
         struct nbt_list *pos_list = (struct nbt_list *)pos_node->payload.tag_list;
         */
@@ -228,8 +254,53 @@ namespace mcmap
       }
     }
 
-    pois.push_back(json_spirit::Pair("players", player_positions));
+    pois.push_back(js::Pair("players", player_positions));
 
     return pois;
+  }
+
+  js::Object mapper::dimension_data(mapper_dimension_t dim)
+  {
+    dimension_t *dimension;
+
+    switch (dim)
+    {
+      case DIMENSION_OVERWORLD: dimension = this->overworld; break;
+      case DIMENSION_NETHER:    dimension = this->nether; break;
+      case DIMENSION_END:       dimension = this->end; break;
+    }
+
+    js::Object obj;
+
+    obj.push_back(js::Pair("name", dimension->name));
+    
+    obj.push_back(js::Pair("num_regions", dimension->num_regions));
+
+    obj.push_back(js::Pair("max_x_extent", dimension->max_x_extent));
+    obj.push_back(js::Pair("max_y_extent", dimension->max_y_extent));
+
+    js::Array regions;
+    float overall_saturation = 0;
+
+    for (std::vector<region_t>::iterator it = dimension->regions.begin(); it < dimension->regions.end(); ++it)
+    {
+      region_t *current = &(*it);
+      js::Object region;
+
+      region.push_back(js::Pair("regionX", current->regionX));
+      region.push_back(js::Pair("regionY", current->regionY));
+
+      region.push_back(js::Pair("saturation", current->map->saturation()));
+
+      overall_saturation += current->map->saturation();
+
+      regions.push_back(region);
+    }
+
+    obj.push_back(js::Pair("regions", regions));
+
+    obj.push_back(js::Pair("overallSaturation", overall_saturation / (float)dimension->num_regions));
+
+    return obj;
   }
 }
