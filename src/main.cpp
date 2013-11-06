@@ -93,7 +93,7 @@ bool load_config()
     config.bounds[2] = 0;
     config.bounds[3] = 0;
 
-    config.zoomLevels[11] = 1;
+    config.zoomLevels[11] = true;
 
     json_spirit::Value cfg;
     json_spirit::read(in, cfg);
@@ -113,8 +113,14 @@ bool load_config()
 
       if (name == "bounds")
       {
-        // TODO: read array
         json_spirit::Array bounds = value.get_array();
+        if (bounds.size() != 4)
+        {
+          cerr << "Bounds has to have 4 values. Defaulting to {0, 0, 0, 0}" << endl;
+        } else
+        {
+          for (int i = 0; i < 4; ++i) config.bounds[i] = bounds[i].get_int();
+        }
       }
 
       if (name == "direction")
@@ -169,8 +175,21 @@ bool load_config()
 
       if (name == "zoomLevels")
       {
-        // TODO: read array
         json_spirit::Array zoomLevels = value.get_array();
+        
+        if (zoomLevels.size() > 12)
+        {
+          cerr << "You've given more zoom levels than are allowed, will only use first 12." << endl;
+        }
+
+        // reset preset default
+        config.zoomLevels[11] = false;
+
+        // set
+        for (int i = 0; i < 12; ++i)
+        {
+          config.zoomLevels[i] = true;
+        }
       }
     }
 
