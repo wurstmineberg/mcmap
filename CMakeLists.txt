@@ -35,6 +35,9 @@ link_directories("/usr/local/lib"
                  "/usr/X11/lib")
 
 add_subdirectory("vendor/cNBT")
+
+set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic")
+set(CMAKE_C_FLAGS "-Os -Wall -pedantic -std=c99")
 add_subdirectory("vendor/json-spirit")
 
 include_directories("vendor/cNBT/")
