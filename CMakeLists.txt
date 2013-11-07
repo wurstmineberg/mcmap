@@ -36,7 +36,7 @@ link_directories("/usr/local/lib"
 
 add_subdirectory("vendor/cNBT")
 
-set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic")
+set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -Wno-unneeded-internal-declaration -Wno-c++11-extensions")
 set(CMAKE_C_FLAGS "-Os -Wall -pedantic -std=c99")
 add_subdirectory("vendor/json-spirit")
 
@@ -45,7 +45,7 @@ link_directories("${CMAKE_SOURCE_DIR}/vendor/cNBT")
 
 include_directories("${CMAKE_SOURCE_DIR}/vendor/json-spirit/json_spirit/")
 
-set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -std=c++11")
+set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -std=c++11 -Wno-unneeded-internal-declaration")
 set(CMAKE_C_FLAGS "-Os -Wall -pedantic -std=c99")
 
 aux_source_directory(src/ SOURCES)
