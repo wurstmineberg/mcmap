@@ -64,11 +64,12 @@ namespace mcmap
 	    looks up the base path (without attached facename and extension)
 	    of a texture for a given block id, data value and orientation
 	  */
-	  boost::filesystem::path texture_basepath(block_face_t block_face);
+	  std::string texture_name(block_face_t block_face);
 	  block_texture_rotation_t texture_rotation(block_face_t block_face);
 
 	  block_info_t block_info;
 	  world_rotation_t world_rotation;
+	  boost::filesystem::path texture_basepath;
 	};
 }
 
