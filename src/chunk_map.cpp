@@ -51,5 +51,12 @@ namespace mcmap
       int x = i % 16, z = (i / 16);
       this->biome[x][z] = (int)(search_node->payload.tag_byte_array.data)[i];
     }
+
+    // number of entities
+    /*
+      This might be a useful statistic to have in terms of figuring out lag spikes and stuffs.
+    */
+    search_node = nbt_find_by_name(this->data, "Entities");
+    this->num_entities = list_length(&search_node->payload.tag_list->entry);
   }
 }

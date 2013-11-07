@@ -26,6 +26,8 @@ namespace mcmap
     int chunkZ;
 
     int biome[16][16];
+
+    int num_entities;
   };
 }
 

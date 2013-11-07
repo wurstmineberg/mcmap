@@ -186,10 +186,7 @@ bool load_config()
         config.zoomLevels[11] = false;
 
         // set
-        for (int i = 0; i < 12; ++i)
-        {
-          config.zoomLevels[i] = true;
-        }
+        for (int i = 0; i < 12; ++i) config.zoomLevels[i] = true;
       }
     }
 
