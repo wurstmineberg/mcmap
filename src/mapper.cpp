@@ -1,7 +1,5 @@
 #include "mapper.hpp"
 
-#include <boost/regex.hpp>
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

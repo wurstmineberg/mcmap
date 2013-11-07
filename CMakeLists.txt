@@ -4,7 +4,7 @@ project(mcmap C CXX)
 
 set(mcmap_VERSION_MAJOR 0)
 set(mcmap_VERSION_MINOR 1)
-set(mcmap_VERSION_PATCH 1)
+set(mcmap_VERSION_PATCH 2)
 
 include(CheckCXXSourceCompiles src/)
 include(CheckCSourceCompiles   src/)
@@ -36,9 +36,6 @@ link_directories("/usr/local/lib"
 
 add_subdirectory("vendor/cNBT")
 add_subdirectory("vendor/json-spirit")
-
-#add_library(libnbt STATIC IMPORTED)
-#set_property(TARGET libnbt PROPERTY IMPORTED_LOCATION "vendor/cNBT/libnbt.a")
 
 include_directories("vendor/cNBT/")
 link_directories("${CMAKE_SOURCE_DIR}/vendor/cNBT")

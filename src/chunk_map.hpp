@@ -4,6 +4,8 @@
 #include <boost/filesystem.hpp>
 #include <nbt.h>
 
+#include <png.h>
+
 #define CHUNK_COMPRESSION_GZIP 1
 #define CHUNK_COMPRESSION_ZLIB 2
 
