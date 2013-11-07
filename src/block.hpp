@@ -56,6 +56,7 @@ namespace mcmap
 
 	  int block_id;
 	  int block_data;
+	  world_rotation_t world_rotation;
 	};
 }
 
