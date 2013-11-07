@@ -50,7 +50,7 @@ include_directories("${CMAKE_SOURCE_DIR}/vendor/json-spirit/json_spirit/")
 set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -std=c++98 -Wno-unneeded-internal-declaration -Wno-c++11-extensions")
 set(CMAKE_C_FLAGS "-Os -Wall -pedantic -std=c99")
 
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -Wall -pedantic -std=c++98 -Wno-unneeded-internal-declaration -Wno-c++11-extensions")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -Wall -pedantic -std=c++98 -Wno-unneeded-internal-declaration -Wno-c++11-extensions -DDEBUG")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wall -pedantic -std=c99")
 
 aux_source_directory(src/ SOURCES)
@@ -78,6 +78,10 @@ target_link_libraries(mcmap
   ${Boost_IOSTREAMS_LIBRARY}
   ${Boost_THREAD_LIBRARY}
 )
+
+if (${CMAKE_BUILD_TYPE} MATCHES DEBUG)
+set(CMAKE_INSTALL_PREFIX ".")
+endif()
 
 add_dependencies(mcmap nbt json_spirit)
 

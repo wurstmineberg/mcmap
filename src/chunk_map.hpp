@@ -19,7 +19,7 @@ namespace mcmap
   {
     unsigned char y;
 
-    block_info_t  blocks[16][16][16];
+    block_info_t  blocks[4096];
 
     // TODO: implement lighting
     //unsigned char skylight[4096];
@@ -46,7 +46,7 @@ namespace mcmap
     int width;
     int height;
 
-    // biome is hex, just remember that, coordinates are x, z
+    // biome is hex, just remember that; coordinates are x, z
     char biome[16][16];
 
     int num_entities;

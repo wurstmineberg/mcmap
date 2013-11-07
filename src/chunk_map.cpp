@@ -104,30 +104,34 @@ namespace mcmap
         nbt_node *block_search_node = nbt_find_by_name(layer_node, "Blocks");
 
         // TODO: implement support for full range of block_ids
-        this->blocks[i].block_id = (int)(block_search_node->payload.tag_byte_array.data[i]);
+        chunk_layer->blocks[i].block_id = (int)(block_search_node->payload.tag_byte_array.data[i]);
 
         block_search_node = nbt_find_by_name(layer_node, "Data");
 
+        char data;
         if (i % 2 == 0)
         {
           // data is low nibble on current index
-          this->blocks[i].data = LO_NIBBLE(block_search_node->payload.tag_byte_array[i]);
+          data = LO_NIBBLE(block_search_node->payload.tag_byte_array.data[i]);
         } else
         {
           // data is high nibble on previous index
-          this->blocks[i].data = HI_NIBBLE(block_search_node->payload.tag_byte_array[(i != 4095) ? i-1 : i]);
+          data = HI_NIBBLE(block_search_node->payload.tag_byte_array.data[(i != 4095) ? i-1 : i]);
         }
+        chunk_layer->blocks[i].data_value = data;
       }
 
       threads[i] = boost::thread(&chunk_map::render_layer, this, chunk_layer);
     }
 
     // wait on layer processing to finish
-    for (int i = 0; i < this->num_layers) threads[i].join();
+    for (int i = 0; i < this->num_layers; i++) threads[i].join();
 
     // TODO: assemble chunk
 
+    #ifdef DEBUG
     exit(1);
+    #endif
   }
 
   void chunk_map::render_layer(chunk_layer_t *chunk_layer)
