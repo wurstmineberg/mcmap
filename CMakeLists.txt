@@ -40,7 +40,10 @@ add_subdirectory("vendor/json-spirit")
 include_directories("vendor/cNBT/")
 link_directories("${CMAKE_SOURCE_DIR}/vendor/cNBT")
 
-set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic")
+include_directories("${CMAKE_SOURCE_DIR}/vendor/json-spirit/json_spirit/")
+
+set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -std=c++11")
+set(CMAKE_C_FLAGS "-Os -Wall -pedantic -std=c99")
 
 aux_source_directory(src/ SOURCES)
 
