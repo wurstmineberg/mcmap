@@ -112,6 +112,7 @@ namespace mcmap
     free(regDirs);
 
     // FIXME: this should be multi-threaded
+    // FIXME: actually maybe not, since chunk rendering is multi threaded
 
     for (std::vector<r_chunk_info_t *>::iterator it = this->chunk_infos.begin(); it < this->chunk_infos.end(); ++it)
     {
@@ -126,8 +127,6 @@ namespace mcmap
       cm.map();
 
       free(chunk_data);
-
-      exit(0);
     }
   }
 }

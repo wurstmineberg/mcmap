@@ -19,12 +19,11 @@ namespace mcmap
   {
     unsigned char y;
 
-    // since we don't have to worry about compression at this point,
-    // these are in "normal" x,y,z order
-
     block_info_t  blocks[16][16][16];
-    unsigned char skylight[16][16][16];
-    unsigned char blocklight[16][16][16];
+
+    // TODO: implement lighting
+    //unsigned char skylight[4096];
+    //unsigned char blocklight[4096];
   } chunk_layer_t;
 
   class chunk_map
@@ -36,7 +35,7 @@ namespace mcmap
 
   private:
     nbt_node *load(void *chunk_data);
-    void renderLayer(chunk_layer_t *chunk_layer);
+    void render_layer(chunk_layer_t *chunk_layer);
 
     nbt_node *data;
     boost::filesystem::path tile_filename;
@@ -44,15 +43,18 @@ namespace mcmap
     int chunkX;
     int chunkZ;
 
-    // biome is hex, just remember that
-    char biome[16][16];
+    int width;
+    int height;
 
-    //png_byte_p layers[16]; // might not all be used
+    // biome is hex, just remember that, coordinates are x, z
+    char biome[16][16];
 
     int num_entities;
     int num_layers;
 
     chunk_layer_t *layers;
+
+    unsigned char **png_rows;
   };
 }
 
