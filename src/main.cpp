@@ -78,7 +78,7 @@ bool load_config()
   if (in.is_open())
   {
     config.blockSize            = 16;
-    config.direction            = 0; // standard north
+    config.direction            = WORLD_ROTATION_SOUTH_EAST; // standard south east orientation
     config.renderEnd            = false;
     config.renderNether         = false;
     config.renderOverworld      = false,
@@ -125,7 +125,7 @@ bool load_config()
 
       if (name == "direction")
       {
-        config.direction = value.get_int();
+        config.direction = (world_rotation_t)value.get_int();
       }
 
       if (name == "outputDir")

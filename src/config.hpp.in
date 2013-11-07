@@ -7,11 +7,19 @@
 
 namespace mcmap
 {
+	typedef enum
+	{
+		WORLD_ROTATION_SOUTH_EAST = 0,
+		WORLD_ROTATION_NORTH_EAST = 1,
+		WORLD_ROTATION_NORTH_WEST = 2,
+		WORLD_ROTATION_SOUTH_WEST = 3
+	} world_rotation_t;
+
   typedef struct 
   {
     int                     bounds[4];
     int                     blockSize;
-    int                     direction;
+    world_rotation_t        direction;
     boost::filesystem::path outputDir;
     bool                    renderEnd;
     bool                    renderNether;
