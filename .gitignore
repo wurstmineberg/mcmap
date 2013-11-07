@@ -9,3 +9,4 @@ Makefile
 mcmap.json
 libjson_spirit.a
 output
+world
