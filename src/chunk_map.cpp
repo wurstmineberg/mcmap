@@ -58,5 +58,30 @@ namespace mcmap
     */
     search_node = nbt_find_by_name(this->data, "Entities");
     this->num_entities = list_length(&search_node->payload.tag_list->entry);
+
+    // actual block data
+    search_node = nbt_find_by_name(this->data, "Sections");
+    this->num_layers = list_length(&search_node->payload.tag_list->entry);
+
+    boost::thread *threads = (boost::thread *)malloc(sizeof(boost::thread) * this->num_layers);
+    this->layers = (chunk_layer_t *)malloc(sizeof(chunk_layer_t) * this->num_layers);
+
+    nbt_node *cursor = search_node;
+    int current = 0;
+    while (cursor->payload.tag_list->entry.flink != search_node->payload.tag_list->entry.flink)
+    {
+      // read the layer data into some nicer structure
+      chunk_layer_t *chunk_layer = &this->layers[current];
+
+      // create a thread for each layer's render processing
+      threads[current++] = boost::thread(&chunk_map::renderLayer, this, chunk_layer);
+    }
+  }
+
+  void renderLayer(chunk_layer_t *chunk_layer)
+  {
+    // TODO: implement
+
+    free(chunk_layer);
   }
 }

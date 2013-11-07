@@ -65,6 +65,7 @@ target_link_libraries(mcmap
   ${Boost_FORMAT_LIBRARY}
   ${Boost_ITERATOR_LIBRARY}
   ${Boost_IOSTREAMS_LIBRARY}
+  ${Boost_THREAD_LIBRARY}
 )
 
 add_dependencies(mcmap nbt json_spirit)
