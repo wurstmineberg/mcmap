@@ -25,7 +25,7 @@ namespace mcmap
   {
     int regionX;
     int regionZ;
-    long filesize;
+    unsigned long filesize;
     region_map *map;
   } region_t;
 
