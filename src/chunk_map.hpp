@@ -8,17 +8,13 @@
 
 #include <png.h>
 
+#include "block.hpp"
+
 #define CHUNK_COMPRESSION_GZIP 1
 #define CHUNK_COMPRESSION_ZLIB 2
 
 namespace mcmap
 {
-  typedef struct block
-  {
-    char data_value;
-    int  block_id;
-  } block_t;
-
   typedef struct chunk_layer
   {
     unsigned char y;
@@ -26,7 +22,7 @@ namespace mcmap
     // since we don't have to worry about compression at this point,
     // these are in "normal" x,y,z order
 
-    block_t       blocks[16][16][16];
+    block_info_t  blocks[16][16][16];
     unsigned char skylight[16][16][16];
     unsigned char blocklight[16][16][16];
   } chunk_layer_t;
