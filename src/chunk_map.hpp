@@ -22,9 +22,13 @@ namespace mcmap
   typedef struct chunk_layer
   {
     unsigned char y;
-    block_t       blocks[4096];
-    int           skylight[4096];
-    int           blocklight[4096];
+
+    // since we don't have to worry about compression at this point,
+    // these are in "normal" x,y,z order
+
+    block_t       blocks[16][16][16];
+    unsigned char skylight[16][16][16];
+    unsigned char blocklight[16][16][16];
   } chunk_layer_t;
 
   class chunk_map
@@ -44,7 +48,8 @@ namespace mcmap
     int chunkX;
     int chunkZ;
 
-    int biome[16][16];
+    // biome is hex, just remember that
+    char biome[16][16];
 
     //png_byte_p layers[16]; // might not all be used
 

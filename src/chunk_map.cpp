@@ -49,7 +49,7 @@ namespace mcmap
     for (int i = 0; i < search_node->payload.tag_byte_array.length; i++)
     {
       int x = i % 16, z = (i / 16);
-      this->biome[x][z] = (int)(search_node->payload.tag_byte_array.data)[i];
+      memcpy(this->biome[x][z], (char)(search_node->payload.tag_byte_array.data[i]), 1);
     }
 
     // number of entities
