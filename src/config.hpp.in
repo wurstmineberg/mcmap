@@ -44,6 +44,7 @@ namespace mcmap
   } version_t;
 
   const version_t MCMAP_VERSION = {@mcmap_VERSION_MAJOR@, @mcmap_VERSION_MINOR@, @mcmap_VERSION_PATCH@};
+  const boost::filesystem::path MCMAP_BASEPATH("@mcmap_BASEPATH@");
 }
 
 #endif
