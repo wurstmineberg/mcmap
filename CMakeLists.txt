@@ -6,6 +6,8 @@ set(mcmap_VERSION_MAJOR 0)
 set(mcmap_VERSION_MINOR 1)
 set(mcmap_VERSION_PATCH 2)
 
+set(mcmap_BASEPATH "${CMAKE_INSTALL_PREFIX}/share/mcmap")
+
 include(CheckCXXSourceCompiles src/)
 include(CheckCSourceCompiles   src/)
 
