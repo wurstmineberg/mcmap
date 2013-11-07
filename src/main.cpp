@@ -108,7 +108,15 @@ bool load_config()
 
       if (name == "blockSize")
       {
-        config.blockSize = value.get_int();
+        int blockSize = value.get_int();
+
+        if (blockSize % 16 == 0)
+        {
+          config.blockSize = blockSize;  
+        } else
+        {
+          cerr << "Block size has to be a multiple of 16.";
+        }
       }
 
       if (name == "bounds")

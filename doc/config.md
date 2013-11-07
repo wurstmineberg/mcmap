@@ -40,7 +40,7 @@ A value of zero leads to the mapping of the whole world.
 
 ## `blockSize`
 
-How many pixels (square) shall a mapped block have? (should be a multiple of 16)
+How many pixels (square) shall a mapped block have? (has to be a multiple of 16)
 
 ## `zoomLevels`
 
