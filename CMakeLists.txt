@@ -45,7 +45,7 @@ link_directories("${CMAKE_SOURCE_DIR}/vendor/cNBT")
 
 include_directories("${CMAKE_SOURCE_DIR}/vendor/json-spirit/json_spirit/")
 
-set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -std=c++11 -Wno-unneeded-internal-declaration")
+set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -std=c++98 -Wno-unneeded-internal-declaration -Wno-c++11-extensions")
 set(CMAKE_C_FLAGS "-Os -Wall -pedantic -std=c99")
 
 aux_source_directory(src/ SOURCES)
@@ -75,3 +75,6 @@ target_link_libraries(mcmap
 )
 
 add_dependencies(mcmap nbt json_spirit)
+
+install(TARGETS mcmap RUNTIME DESTINATION bin)
+install(DIRECTORY misc DESTINATION share/mcmap FILES_MATCHING PATTERN *.json)

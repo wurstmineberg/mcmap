@@ -115,7 +115,7 @@ bool load_config()
           config.blockSize = blockSize;  
         } else
         {
-          cerr << "Block size has to be a multiple of 16.";
+          cerr << "Block size has to be a multiple of 16." << endl;
         }
       }
 
