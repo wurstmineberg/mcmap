@@ -106,6 +106,11 @@ bool load_config()
       const string& name  = pair.name_;
       const json_spirit::Value& value = pair.value_;
 
+      if (name == "assetDir")
+      {
+        config.assetDir = fs::path(value.get_str());
+      }
+
       if (name == "blockSize")
       {
         int blockSize = value.get_int();

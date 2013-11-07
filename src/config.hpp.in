@@ -17,6 +17,7 @@ namespace mcmap
 
   typedef struct 
   {
+    boost::filesystem::path assetDir;
     int                     bounds[4];
     int                     blockSize;
     world_rotation_t        direction;

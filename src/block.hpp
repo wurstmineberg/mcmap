@@ -14,6 +14,12 @@
 
 namespace mcmap
 {
+	typedef struct block_info
+  {
+    char data_value;
+    int  block_id;
+  } block_info_t;
+
 	typedef enum
 	{
 	  BLOCK_FACE_TOP,
@@ -36,10 +42,17 @@ namespace mcmap
 		BLOCK_TEXTURE_ROTATION_FLIP_270 = 7
 	} block_texture_rotation_t;
 
+	typedef struct
+	{
+		int id;
+		int data;
+
+	} item_info;
+
 	class block
 	{
 	public:
-	  block(int block_id, int block_data);
+	  block(block_info_t block_info);
 	  ~block();
 
 	  png_structp rendered_texture();
@@ -54,8 +67,8 @@ namespace mcmap
 	  boost::filesystem::path texture_basepath(block_face_t block_face);
 	  block_texture_rotation_t texture_rotation(block_face_t block_face);
 
-	  int block_id;
-	  int block_data;
+	  block_info_t block_info;
+	  world_rotation_t world_rotation;
 	};
 }
 

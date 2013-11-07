@@ -2,9 +2,8 @@
 
 namespace mcmap
 {
-	block::block(int block_id, int block_data)
+	block::block(block_info_t block__info)
 	{
-		this->block_id = block_id;
-		this->block_data = block_data;
+		this->block_info = block_info;
 	}
 }

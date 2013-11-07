@@ -4,6 +4,7 @@ if provided via parameter or found in the current working directory as `mcmap.js
 mcmap will obey to json configuration file of the following format:
 
     {
+      "assetDir": "~/.minecraft/extracted_jar/assets"
       "bounds": 
       [
         -10,
@@ -11,6 +12,7 @@ mcmap will obey to json configuration file of the following format:
         10,
         10
       ],
+
       "blockSize": 16,
       "outputDir": "./output/",
       "renderEnd": false,
@@ -23,6 +25,10 @@ mcmap will obey to json configuration file of the following format:
       "world": "~/.minecraft/saves/worldsave",
       "zoomLevels": [1,4,12]
     }
+
+## `assetDir`
+
+The asset dir from the extracted minecraft client.
 
 ## `world`
 
