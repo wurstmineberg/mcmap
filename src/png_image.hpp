@@ -1,5 +1,5 @@
-#ifndef __png_image_hpp
-#define __png_image_hpp
+#ifndef __png_reader_hpp
+#define __png_reader_hpp
 
 #include <iostream>
 #include <fstream>
@@ -11,11 +11,10 @@
 
 namespace mcmap
 {
-	class png_image
+	class png_reader
 	{
 	public:
-		png_image(boost::filesystem::path *path);
-    ~png_image();
+		png_reader(boost::filesystem::path *path);
 		png_structp get_png_data();
 
 	private:

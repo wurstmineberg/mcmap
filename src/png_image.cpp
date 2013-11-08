@@ -1,4 +1,4 @@
-#include "png_image.hpp"
+#include "png_reader.hpp"
 
 using namespace std;
 
@@ -6,18 +6,18 @@ namespace fs = boost::filesystem;
 
 namespace mcmap
 {
-	png_image::png_image(fs::path *path)
+	png_reader::png_reader(fs::path *path)
 	{
     this->path = path;
     this->fp.open(path->string().c_str(), ios::binary);
 	}
 
-  png_image::~png_image()
+  png_reader::~png_reader()
   {
     this->fp.close();
   }
 
-	png_structp png_image::get_png_data()
+	png_structp png_reader::get_png_data()
 	{
     if (!this->validate())
     {
@@ -27,7 +27,7 @@ namespace mcmap
 
   }
 
-  bool png_image::validate()
+  bool png_reader::validate()
   {
 
   }
