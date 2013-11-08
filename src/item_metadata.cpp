@@ -96,13 +96,7 @@ namespace mcmap
 	    json_spirit::read(in, data);
 
 	    this->json_data = data.get_obj();
-
-	    block_info_t block_info;
-	    block_info.block_id = 13;
-	    block_info.data_value = 0;
-
-	    this->get_metadata(block_info);
-
+	    
 	    return true;
 	  }
 
