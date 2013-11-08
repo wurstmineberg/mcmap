@@ -5,8 +5,8 @@ namespace mcmap
 {
   typedef struct block_info
   {
-    char data_value;
-    int  block_id;
+    uint32_t id;
+    uint8_t data;
   } block_info_t;
 
   typedef struct

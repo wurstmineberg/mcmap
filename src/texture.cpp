@@ -1,36 +1,67 @@
 #include "texture.hpp"
 #include "config.hpp"
 
-using namespace mcmap;
-namespace fs = boost::filesystem;
-
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace mcmap
 {
-	texture::texture(boost::filesystem::path path, texture_rotation_t rotation)
+	void texture::init_with_path(fs::path filesystem_path, texture_rotation_t rotation)
 	{
-		if (config.verbose) cout << "New texture: " << path << endl;
+		this->path = new fs::path(filesystem_path.string());
+		if (config.verbose) cout << "New texture: " << *this->path << " Rotation: " << boost::format("%i") % (int)rotation << endl;
 	}
 
-	texture::texture(boost::filesystem::path path)
+	void texture::init_with_identifier(string identifier, texture_rotation_t rotation)
 	{
-		texture(path, TEXTURE_ROTATION_0);
+		if (identifier.compare("") == 0)
+		{
+			this->path = NULL;
+		} else {
+			fs::path filesystem_path = config.assetDir;
+			filesystem_path /= "minecraft/textures/";
+			filesystem_path /= identifier.append(".png");
+			this->init_with_path(filesystem_path, rotation);
+		}
+	}
+
+	texture::texture(fs::path filesystem_path, texture_rotation_t rotation)
+	{
+		this->init_with_path(filesystem_path, rotation);
 	}
 
 	texture::texture(string identifier, texture_rotation_t rotation)
 	{
-		fs::path texture_file = config.assetDir;
-		texture_file /= "minecraft/textures/";
-		texture_file /= identifier.append(".png");
-		texture(texture_file, rotation);
+		this->init_with_identifier(identifier, rotation);
 	}
 
 	texture::texture(string identifier)
 	{
-		texture(identifier, TEXTURE_ROTATION_0);
+		size_t last_at_sign = identifier.find_last_of("@");
+		if (last_at_sign == string::npos)
+		{
+			this->init_with_identifier(identifier, TEXTURE_ROTATION_0);
+		} else {
+			string name = identifier.substr(0, last_at_sign);
+			string rotation_string = identifier.substr(last_at_sign + 1, identifier.length());
+			unsigned int rotation_int = boost::lexical_cast<unsigned int>(rotation_string);
+			if (rotation_int <= 7)
+			{
+				texture_rotation_t rotation = static_cast<texture_rotation_t>(rotation_int);
+				this->init_with_identifier(name, rotation);
+			} else {
+				cerr << "Texture with name: \"" << name << "\" has invalid rotation value: " << rotation_string << ". Defaulting to no rotation. Please fix items.json. " << endl;
+				this->init_with_identifier(name, TEXTURE_ROTATION_0);
+			}
+		}
 	}
 
-	boost::filesystem::path texture::get_path()
+	texture::~texture()
+	{
+		delete this->path;
+	}
+
+	boost::filesystem::path *texture::get_path()
 	{
 		return this->path;
 	}

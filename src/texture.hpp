@@ -7,6 +7,7 @@
 #include <png.h>
 
 using namespace std;
+namespace fs = boost::filesystem;
 
 namespace mcmap
 {
@@ -25,17 +26,20 @@ namespace mcmap
 	class texture
 	{
 	public:
-		texture(string identifier);
 		texture(string identifier, texture_rotation_t rotation);
+		texture(string identifier);
+		texture(fs::path, texture_rotation_t rotation = TEXTURE_ROTATION_0);
 
-		texture(boost::filesystem::path);
-		texture(boost::filesystem::path, texture_rotation_t rotation);
+		~texture();
 
-		boost::filesystem::path get_path();
-		png_structp get_png_data();
+		boost::filesystem::path *get_path();
+		png_structp *get_png_data();
 
 	private:
-		boost::filesystem::path path;
+		void init_with_path(fs::path filesystem_path, texture_rotation_t rotation);
+		void init_with_identifier(string identifier, texture_rotation_t rotation);
+
+		fs::path *path;
 		texture_rotation_t rotation;
 	};
 }

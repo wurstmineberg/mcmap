@@ -104,7 +104,7 @@ namespace mcmap
         nbt_node *block_search_node = nbt_find_by_name(layer_node, "Blocks");
 
         // TODO: implement support for full range of block_ids
-        chunk_layer->blocks[i].block_id = (int)(block_search_node->payload.tag_byte_array.data[i]);
+        chunk_layer->blocks[i].id = (int)(block_search_node->payload.tag_byte_array.data[i]);
 
         block_search_node = nbt_find_by_name(layer_node, "Data");
 
@@ -118,7 +118,7 @@ namespace mcmap
           // data is high nibble on previous index
           data = HI_NIBBLE(block_search_node->payload.tag_byte_array.data[(i != 4095) ? i-1 : i]);
         }
-        chunk_layer->blocks[i].data_value = data;
+        chunk_layer->blocks[i].data = data;
       }
 
       threads[i] = boost::thread(&chunk_map::render_layer, this, chunk_layer);

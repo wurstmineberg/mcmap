@@ -22,25 +22,29 @@ namespace mcmap
 	{
 	public:
 		item_metadata(json_spirit::mObject json_object);
+		item_metadata(item_metadata *default_metadata, json_spirit::mObject itemdict);
 		texture *get_texture(block_face_t block_face);
 		item_metadata_info_t *get_metadata_info();
 
 	private:
 		item_metadata_info_t metadata_info;
 		json_spirit::mObject json_data;
-		bool get_value_for_key(string key, const json_spirit::mValue *value);
+		void set_textures();
+		texture *get_texture_from_dict(block_face_t block_face);
+		void set_metadata_from_dict(json_spirit::mObject itemdict);
 	};
 
 	class item_metadata_store
 	{
 	public:
 		item_metadata_store();
-		item_metadata *get_metadata(block_info_t block_info);
+		item_metadata *get_metadata(block_info_t *block_info);
 		void print_raw_data();
 
 	private:
 		bool load_metadata();
 		item_metadata *get_metadata_for_key(string key);
+		item_metadata *get_metadata_for_key(string key, item_metadata *default_metadata);
 		json_spirit::mObject json_data;
 	};
 
