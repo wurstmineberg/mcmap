@@ -11,9 +11,19 @@ using namespace mcmap;
 
 namespace mcmap
 {
-	texture item_metadata::get_texture(block_face_t block_face)
+	texture *item_metadata::get_texture(block_face_t block_face)
 	{
+		const json_spirit::mValue value;
+		json_spirit::mObject::const_iterator iterator;
+		string *default_texture = NULL;
 
+		iterator = this->json_data.find("texture");
+	  if (iterator != this->json_data.end() && iterator->first == "texture")
+	  {
+	  	default_texture = new string(iterator->second.get_str());
+	  }
+
+	  return new texture(*default_texture);
 	}
 
 	item_metadata_info_t *item_metadata::get_metadata_info()
@@ -46,7 +56,7 @@ namespace mcmap
 
 	item_metadata_store::item_metadata_store()
 	{
-		this->load_config();
+		this->load_metadata();
 	}
 
 	item_metadata *item_metadata_store::get_metadata_for_key(string key)
@@ -70,7 +80,7 @@ namespace mcmap
 		return metadata;
 	}
 
-	bool item_metadata_store::load_config()
+	bool item_metadata_store::load_metadata()
 	{
 	  // load items.json
 	  fs::path p(fs::current_path());

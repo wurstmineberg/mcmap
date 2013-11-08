@@ -137,7 +137,5 @@ namespace mcmap
   void chunk_map::render_layer(chunk_layer_t *chunk_layer)
   {
     // TODO: implement
-
-    free(chunk_layer);
   }
 }

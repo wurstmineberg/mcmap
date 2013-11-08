@@ -2,9 +2,9 @@
 
 namespace mcmap
 {
-	block::block(block_info_t block__info)
+	block::block(block_info_t block_info)
 	{
 		this->block_info = block_info;
-		this->texture_basepath = config.assetDir += "minecraft/textures";
+		this->metadata = metadata_store.get_metadata(block_info);
 	}
 }

@@ -9,13 +9,20 @@
 #include "config.hpp"
 #include "mapper.hpp"
 
+#include "item_metadata.hpp"
+
 using namespace std;
 using namespace mcmap;
 
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
-mcmap::config_t mcmap::config;
+namespace mcmap
+{
+	config_t config;
+	item_metadata_store metadata_store;
+}
+
 
 bool load_config();
 
@@ -57,6 +64,8 @@ int main(int argc, char **argv)
     cout << "usage:\n\t " << argv[0] << " [-vh]" << endl;
     return 0;
   }
+
+  metadata_store = item_metadata_store();
 
   // if we got this far, everything should be fine (beware, Murphy is probably somewhere around here.)
 
