@@ -5,6 +5,7 @@
 #include <boost/filesystem.hpp>
 
 #include <png.h>
+#include "png_reader.hpp"
 
 using namespace std;
 namespace fs = boost::filesystem;
@@ -33,7 +34,7 @@ namespace mcmap
 		~texture();
 
 		boost::filesystem::path *get_path();
-		png_structp *get_png_data();
+		png_structp get_png_data();
 
 		string to_string();
 	private:

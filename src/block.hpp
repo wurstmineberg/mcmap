@@ -23,7 +23,7 @@ namespace mcmap
 	  block(block_info_t block_info);
 	  ~block();
 
-	  png_structp rendered_texture();
+	  png_structp get_rendered_texture();
 
 	private:
 	  int required_texture_size();
