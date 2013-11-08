@@ -9,7 +9,8 @@ namespace mcmap
 	void texture::init_with_path(fs::path filesystem_path, texture_rotation_t rotation)
 	{
 		this->path = new fs::path(filesystem_path.string());
-		if (config.verbose) cout << "New texture: " << *this->path << " Rotation: " << boost::format("%i") % (int)rotation << endl;
+		this->rotation = rotation;
+		if (config.verbose) cout << "New texture: " << this->to_string() << endl;
 	}
 
 	void texture::init_with_identifier(string identifier, texture_rotation_t rotation)
@@ -64,5 +65,12 @@ namespace mcmap
 	boost::filesystem::path *texture::get_path()
 	{
 		return this->path;
+	}
+
+	string texture::to_string()
+	{
+		stringstream stream;
+		stream << *this->path << " Rotation: " << boost::format("%i") % (int)this->rotation;
+		return stream.str();
 	}
 }

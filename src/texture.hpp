@@ -35,6 +35,7 @@ namespace mcmap
 		boost::filesystem::path *get_path();
 		png_structp *get_png_data();
 
+		string to_string();
 	private:
 		void init_with_path(fs::path filesystem_path, texture_rotation_t rotation);
 		void init_with_identifier(string identifier, texture_rotation_t rotation);

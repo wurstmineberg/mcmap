@@ -16,10 +16,9 @@ namespace mcmap
 		}
 
 		if (config.verbose) cout << "New block with name: " << this->metadata->get_metadata_info()->name << endl;
-		texture *mytexture = this->get_texture(BLOCK_FACE_WEST);
-		boost::filesystem::path *path = mytexture->get_path();
+		texture *mytexture = this->get_texture(BLOCK_FACE_EAST);
 
-		if (config.verbose) cout << "Texture: " << path->string() << endl;
+		if (config.verbose) cout << "Texture: " << mytexture->to_string() << endl;
 	}
 
 	block::~block()
