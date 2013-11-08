@@ -24,20 +24,25 @@ namespace mcmap
     png_image(long width, long height);
     ~png_image();
 
+    png_bytep    get_row(int i);
+    png_bytep   *get_rows();
+
 	private:
     png_structp png_ptr;
     png_infop   info_ptr;
-    png_bytep  *rowPtrs;
     
-
+    png_bytep     *rows;
+    unsigned char *data;
+    
     long width;
     long height;
 
     void save(boost::filesystem::path p);
-    void load();
+    bool load();
     
     bool validate_stream();
     bool init_png_structs();
+    void read_png_info();
 
     std::fstream fp;
 	};

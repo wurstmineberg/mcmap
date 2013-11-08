@@ -56,8 +56,6 @@ namespace mcmap
     int num_layers;
 
     chunk_layer_t *layers;
-
-    unsigned char **png_rows;
   };
 }
 

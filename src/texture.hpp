@@ -4,8 +4,7 @@
 #include <string>
 #include <boost/filesystem.hpp>
 
-#include <png.h>
-#include "png_reader.hpp"
+#include "png_image.hpp"
 
 using namespace std;
 namespace fs = boost::filesystem;

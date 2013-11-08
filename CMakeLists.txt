@@ -45,7 +45,6 @@ link_directories(${Boost_LIBRARY_DIRS})
 find_package(ImageMagick COMPONENTS Magick++)
 
 include_directories(${ImageMagick_INCLUDE_DIRS})
-target_link_libraries(YourApp ${ImageMagick_LIBRARIES})
 
 include_directories("/usr/local/include")
 
@@ -85,7 +84,7 @@ target_link_libraries(mcmap
   z 
   json_spirit
   nbt
-  magick++
+  ${ImageMagick_LIBRARIES}
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
