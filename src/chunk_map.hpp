@@ -13,6 +13,9 @@
 #define CHUNK_COMPRESSION_GZIP 1
 #define CHUNK_COMPRESSION_ZLIB 2
 
+#define HI_NIBBLE(b) (((b) >> 4) & 0x0F)
+#define LO_NIBBLE(b) ((b) & 0x0F)
+
 namespace mcmap
 {
   typedef struct chunk_layer
@@ -22,8 +25,8 @@ namespace mcmap
     block_info_t  blocks[4096];
 
     // TODO: implement lighting
-    //unsigned char skylight[4096];
-    //unsigned char blocklight[4096];
+    char skylight[4096];
+    char blocklight[4096];
   } chunk_layer_t;
 
   class chunk_map
@@ -36,6 +39,7 @@ namespace mcmap
   private:
     nbt_node *load(void *chunk_data);
     void render_layer(chunk_layer_t *chunk_layer);
+    char calc_short(nbt_node *byte_array_node, int i);
 
     nbt_node *data;
     boost::filesystem::path tile_filename;

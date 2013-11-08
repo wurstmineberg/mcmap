@@ -7,9 +7,6 @@
 
 using namespace std;
 
-#define HI_NIBBLE(b) (((b) >> 4) & 0x0F)
-#define LO_NIBBLE(b) ((b) & 0x0F)
-
 namespace mcmap
 {
   chunk_map::chunk_map(void *chunk_data)
@@ -107,18 +104,13 @@ namespace mcmap
         chunk_layer->blocks[i].block_id = (int)(block_search_node->payload.tag_byte_array.data[i]);
 
         block_search_node = nbt_find_by_name(layer_node, "Data");
+        chunk_layer->blocks[i].data_value = this->calc_short(block_search_node, i);
 
-        char data;
-        if (i % 2 == 0)
-        {
-          // data is low nibble on current index
-          data = LO_NIBBLE(block_search_node->payload.tag_byte_array.data[i]);
-        } else
-        {
-          // data is high nibble on previous index
-          data = HI_NIBBLE(block_search_node->payload.tag_byte_array.data[(i != 4095) ? i-1 : i]);
-        }
-        chunk_layer->blocks[i].data_value = data;
+        block_search_node = nbt_find_by_name(layer_node, "BlockLight");
+        chunk_layer->blocklight[i] = this->calc_short(block_search_node, i);
+
+        block_search_node = nbt_find_by_name(layer_node, "SkyLight");
+        chunk_layer->skylight[i] = this->calc_short(block_search_node, i);
       }
 
       threads[i] = boost::thread(&chunk_map::render_layer, this, chunk_layer);
@@ -137,5 +129,22 @@ namespace mcmap
   void chunk_map::render_layer(chunk_layer_t *chunk_layer)
   {
     // TODO: implement
+  }
+
+  char chunk_map::calc_short(nbt_node *byte_array_node, int i)
+  {
+    char s;
+    
+    if (i % 2 == 0)
+    {
+      // data is low nibble on current index
+      s = LO_NIBBLE(byte_array_node->payload.tag_byte_array.data[i]);
+    } else
+    {
+      // data is high nibble on previous index
+      s = HI_NIBBLE(byte_array_node->payload.tag_byte_array.data[(i != 4095) ? i-1 : i]);
+    }
+
+    return s;
   }
 }
