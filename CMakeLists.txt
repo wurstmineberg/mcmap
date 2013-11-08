@@ -13,6 +13,17 @@ include(CheckCSourceCompiles   src/)
 
 include(CheckLibraryExists)
 
+# clean all command, see 
+# http://stackoverflow.com/questions/9680420/looking-for-a-cmake-clean-command-to-clear-up-cmake-output
+add_custom_target(clean-cmake-files
+   COMMAND ${CMAKE_COMMAND} -P clean-all.cmake
+)
+
+add_custom_target(clean-all
+   COMMAND ${CMAKE_BUILD_TOOL} clean
+   COMMAND ${CMAKE_COMMAND} -P clean-all.cmake
+)
+
 check_library_exists(z    deflate     "" HAVE_ZLIB)
 find_library(png REQUIRED)
 
