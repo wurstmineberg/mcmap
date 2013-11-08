@@ -24,7 +24,6 @@ namespace mcmap
 
     block_info_t  blocks[4096];
 
-    // TODO: implement lighting
     char skylight[4096];
     char blocklight[4096];
   } chunk_layer_t;
@@ -51,7 +50,7 @@ namespace mcmap
     int height;
 
     // biome is hex, just remember that; coordinates are x, z
-    char biome[16][16];
+    char biome[256];
 
     int num_entities;
     int num_layers;

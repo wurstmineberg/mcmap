@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 
+#include <boost/lexical_cast.hpp>
+
 namespace fs = boost::filesystem;
 
 using namespace std;
@@ -75,7 +77,7 @@ namespace mcmap
 
 	item_metadata *item_metadata_store::get_metadata(block_info_t block_info)
 	{
-		string baseKey = std::to_string(block_info.block_id);
+		string baseKey = boost::lexical_cast<std::string>(block_info.block_id);
 		item_metadata *metadata = this->get_metadata_for_key(baseKey);
 		return metadata;
 	}

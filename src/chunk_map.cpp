@@ -53,9 +53,7 @@ namespace mcmap
     search_node = nbt_find_by_name(this->data, "Biomes");
     for (int i = 0; i < search_node->payload.tag_byte_array.length; i++)
     {
-      // FIXME: these coordinates are very possibly very wrong
-      int z = i % 16, x = (i / 16);
-      this->biome[z][x] = search_node->payload.tag_byte_array.data[i];
+      this->biome[i] = search_node->payload.tag_byte_array.data[i];
     }
 
     // number of entities
