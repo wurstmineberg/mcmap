@@ -4,6 +4,8 @@
 #include <string>
 #include <boost/filesystem.hpp>
 
+#include <png.h>
+
 using namespace std;
 
 namespace mcmap
@@ -25,9 +27,16 @@ namespace mcmap
 	public:
 		texture(string identifier);
 		texture(string identifier, texture_rotation_t rotation);
-		
+
 		texture(boost::filesystem::path);
 		texture(boost::filesystem::path, texture_rotation_t rotation);
+
+		boost::filesystem::path get_path();
+		png_structp get_png_data();
+
+	private:
+		boost::filesystem::path path;
+		texture_rotation_t rotation;
 	};
 }
 

@@ -32,8 +32,8 @@ namespace mcmap
 	    looks up the base path (without attached facename and extension)
 	    of a texture for a given block id, data value and orientation
 	  */
-	  texture texture(block_face_t block_face);
-	  texture_rotation_t texture_rotation(block_face_t block_face);
+	  texture *get_texture(block_face_t block_face);
+	  texture_rotation_t get_texture_rotation(block_face_t block_face);
 
 	  block_info_t block_info;
 	  item_metadata *metadata;

@@ -21,13 +21,17 @@ namespace mcmap
 	{
 		fs::path texture_file = config.assetDir;
 		texture_file /= "minecraft/textures/";
-		texture_file /= identifier.c_str();
-		texture_file /= ".png";
+		texture_file /= identifier.append(".png");
 		texture(texture_file, rotation);
 	}
 
 	texture::texture(string identifier)
 	{
 		texture(identifier, TEXTURE_ROTATION_0);
+	}
+
+	boost::filesystem::path texture::get_path()
+	{
+		return this->path;
 	}
 }
