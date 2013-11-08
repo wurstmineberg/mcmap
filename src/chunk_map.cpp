@@ -102,7 +102,7 @@ namespace mcmap
         chunk_layer->blocks[i].id = (int)(block_search_node->payload.tag_byte_array.data[i]);
 
         block_search_node = nbt_find_by_name(layer_node, "Data");
-        chunk_layer->blocks[i].data_value = this->calc_short(block_search_node, i);
+        chunk_layer->blocks[i].data = this->calc_short(block_search_node, i);
 
         block_search_node = nbt_find_by_name(layer_node, "BlockLight");
         chunk_layer->blocklight[i] = this->calc_short(block_search_node, i);
