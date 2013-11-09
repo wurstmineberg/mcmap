@@ -65,33 +65,15 @@ namespace mcmap
     return 0;
   }
 
-  dimension_t *mapper::analyze_world(mapper_dimension_t dim)
+  dimension_data_t *mapper::analyze_world(dimension_t dim)
   {
-    dimension_t *dimension = new dimension_t;
+    dimension_data_t *dimension_data = new dimension_data_t;
 
-    string dimension_storage = "";
-    
-    switch (dim)
-    {
-      case DIMENSION_OVERWORLD: 
-        dimension->name   = "Overworld";
-        dimension_storage = "region"; 
-        break;
+    fs::path regions_path = fs::path(config.worldPath) / dimension_storage(dim);
 
-      case DIMENSION_NETHER: 
-        dimension->name   = "Nether";
-        dimension_storage = "DIM-1"; 
-        break;
-
-      case DIMENSION_END: 
-        dimension->name    = "End";
-        dimension_storage = "DIM1"; 
-        break;
-    }
-
-    fs::path regions_path = fs::path(config.worldPath) / dimension_storage;
-
-    dimension->num_regions = 0;
+    dimension_data->name = dimension2string(dim);
+    dimension_data->dimension   = dim;
+    dimension_data->num_regions = 0;
 
     int max_x = 1,  max_z = 1;
     int min_x = -1, min_z = -1;
@@ -99,7 +81,7 @@ namespace mcmap
     for (fs::directory_iterator it(regions_path); it != fs::directory_iterator(); ++it)
     {
       // calculate region coordinates
-      dimension->num_regions++;
+      dimension_data->num_regions++;
       
       string regionIdent = it->path().stem().string().substr(2);
       
@@ -152,26 +134,26 @@ namespace mcmap
           new region_map(fs::path(it->path()), x, z)
         };
 
-        dimension->regions.push_back(r);
+        dimension_data->regions.push_back(r);
       }
     }
 
-    dimension->max_x_extent = abs(min_x) + abs(max_x);
-    dimension->max_z_extent = abs(min_z) + abs(max_z);
+    dimension_data->max_x_extent = abs(min_x) + abs(max_x);
+    dimension_data->max_z_extent = abs(min_z) + abs(max_z);
 
-    return dimension;
+    return dimension_data;
   }
 
-  void mapper::map(mapper_dimension_t dim)
+  void mapper::map(dimension_t dim)
   {
-    dimension_t *dimension = this->get_dimension(dim);
+    dimension_data_t *dimension_data = this->get_dimension(dim);
 
     // create and change into temp directory for dimension tiles
-    fs::path p(dimension->name);
+    fs::path p(dimension_data->name);
     fs::create_directory(p);
     chdir(p.string().c_str());
 
-    for (std::vector<region_t>::iterator it = dimension->regions.begin(); it < dimension->regions.end(); ++it)
+    for (std::vector<region_t>::iterator it = dimension_data->regions.begin(); it < dimension_data->regions.end(); ++it)
     {
       region_t *current = &(*it);
       current->map->map();
@@ -322,9 +304,9 @@ namespace mcmap
     return pois;
   }
 
-  js::Object mapper::dimension_data(mapper_dimension_t dim)
+  js::Object mapper::dimension_data(dimension_t dim)
   {
-    dimension_t *dimension = this->get_dimension(dim);
+    dimension_data_t *dimension = this->get_dimension(dim);
 
     js::Object obj;
 
@@ -360,9 +342,9 @@ namespace mcmap
     return obj;
   }
 
-  dimension_t *mapper::get_dimension(mapper_dimension_t dim)
+  dimension_data_t *mapper::get_dimension(dimension_t dim)
   {
-    dimension_t *dimension;
+    dimension_data_t *dimension;
 
     switch (dim)
     {

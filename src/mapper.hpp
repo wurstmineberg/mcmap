@@ -14,32 +14,6 @@
 
 namespace mcmap
 {
-  typedef enum mapper_dimension 
-  {
-    DIMENSION_OVERWORLD = 0,
-    DIMENSION_NETHER    = -1,
-    DIMENSION_END       = 1
-  } mapper_dimension_t;
-
-  typedef struct region
-  {
-    int regionX;
-    int regionZ;
-    unsigned long filesize;
-    region_map *map;
-  } region_t;
-
-  typedef struct dimension
-  {
-    std::string name;
-
-    int num_regions;
-    int max_x_extent;
-    int max_z_extent;
-
-    std::vector<region_t> regions;    
-  } dimension_t;
-
   class mapper
   {
   public:
@@ -49,21 +23,21 @@ namespace mcmap
   
     /* data */
   private:
-    dimension_t *analyze_world(mapper_dimension_t dim);
-    void map(mapper_dimension_t dim);
-    dimension_t *get_dimension(mapper_dimension_t dim);
+    dimension_data_t *analyze_world(dimension_t dim);
+    void map(dimension_t dim);
+    dimension_data_t *get_dimension(dimension_t dim);
     
     void save_map_statistics();
     
     json_spirit::Object pois();
-    json_spirit::Object dimension_data(mapper_dimension_t dim);
+    json_spirit::Object dimension_data(dimension_t dim);
 
     nbt_node* level_dat;
     boost::filesystem::path output;
     
-    dimension_t *overworld;
-    dimension_t *nether;
-    dimension_t *end;
+    dimension_data_t *overworld;
+    dimension_data_t *nether;
+    dimension_data_t *end;
   };
 }
 

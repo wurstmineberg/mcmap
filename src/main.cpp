@@ -23,7 +23,6 @@ namespace mcmap
 	item_metadata_store metadata_store;
 }
 
-
 bool load_config();
 
 int main(int argc, char **argv)
@@ -53,6 +52,8 @@ int main(int argc, char **argv)
          << MCMAP_VERSION.minor 
          << "." 
          << MCMAP_VERSION.patch 
+         << "-"
+         << MCMAP_VERSION.hash
          << endl;
 
     if (vm.count("version") == 1) exit(0);
