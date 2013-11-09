@@ -70,13 +70,13 @@ namespace mcmap
 	string texture::to_string()
 	{
 		stringstream stream;
-		stream << *this->path << " Rotation: " << boost::format("%i") % (int)this->rotation;
+		stream << "<Texture: \"" << *this->path << "\" Rotation: " << boost::format("%i") % (int)this->rotation << ">";
 		return stream.str();
 	}
 
-	png_structp texture::get_png_data()
+	png_image *texture::get_image()
 	{
-		png_reader reader = png_reader(this->path);
-		return reader.get_png_data();
+		png_image *image = new png_image(*this->path);
+		return image;
 	}
 }

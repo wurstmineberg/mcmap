@@ -39,6 +39,8 @@ namespace mcmap
 		{
 			return this->metadata_info.textures.bottom;
 		}
+
+		return NULL;
 	}
 
 	void item_metadata::set_textures()

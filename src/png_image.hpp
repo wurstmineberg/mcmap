@@ -8,6 +8,7 @@
 #include <png.h>
 
 #include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
 
 namespace mcmap
 {
@@ -20,7 +21,7 @@ namespace mcmap
 	class png_image
 	{
 	public:
-		png_image(boost::filesystem::path p);
+		png_image(fs::path p);
     png_image(long width, long height);
     ~png_image();
 
@@ -37,7 +38,7 @@ namespace mcmap
     long width;
     long height;
 
-    void save(boost::filesystem::path p);
+    void save(fs::path p);
     bool load();
     
     bool validate_stream();

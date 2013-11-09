@@ -44,16 +44,14 @@ namespace mcmap
 
   bool png_image::validate_stream()
   {
-    char *testbuf = (char *)malloc(sizeof(char) * 8);
+    char testbuf[sizeof(char) * 8];
     bool valid = false;
     
     this->fp.read(testbuf, 8);
     int sig_valid = png_sig_cmp((png_bytep)testbuf, 0, 8);
     valid = (this->fp.good() && sig_valid == 0);
     this->fp.seekg(0, this->fp.beg);
-
-    free(testbuf);
-
+    
     return valid;
   }
 
