@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include <boost/filesystem.hpp>
 #include <nbt.h>
@@ -24,20 +25,17 @@ namespace mcmap
     /* data */
   private:
     dimension_data_t *analyze_world(dimension_t dim);
-    void map(dimension_t dim);
-    dimension_data_t *get_dimension(dimension_t dim);
+    void map(void);
     
     void save_map_statistics();
     
     json_spirit::Object pois();
-    json_spirit::Object dimension_data(dimension_t dim);
+    json_spirit::Object dimension_data(dimension_data_t *dimension);
 
     nbt_node* level_dat;
     boost::filesystem::path output;
-    
-    dimension_data_t *overworld;
-    dimension_data_t *nether;
-    dimension_data_t *end;
+
+    std::vector<dimension_data_t *> dimensions;
   };
 }
 

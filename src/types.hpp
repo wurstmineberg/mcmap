@@ -4,33 +4,30 @@
 namespace mcmap
 {
   /* basic data types */
-  typedef struct 
-  {
-    int major;
-    int minor;
-    int patch;
-    char hash[10];
-  } version_t; 
-
   typedef enum
   {
-    WORLD_ROTATION_SOUTH_EAST = 0,
-    WORLD_ROTATION_NORTH_EAST = 1,
-    WORLD_ROTATION_NORTH_WEST = 2,
-    WORLD_ROTATION_SOUTH_WEST = 3
-  } world_rotation_t;
-
-  typedef enum
-  {
-    RENDER_MODE_TOP,
-    RENDER_MODE_ISOMETRIC
+    RENDER_MODE_TOP       = 0x1,
+    RENDER_MODE_ISOMETRIC = 0x2
   } render_mode_t;
 
   typedef enum
   {
-    DIMENSION_OVERWORLD = 0,
-    DIMENSION_NETHER    = -1,
-    DIMENSION_END       = 1
+    WORLD_ROTATION_NORTH      = 0x01,
+    WORLD_ROTATION_NORTH_EAST = 0x02,
+    WORLD_ROTATION_EAST       = 0x04,
+    WORLD_ROTATION_SOUTH_EAST = 0x08,
+    WORLD_ROTATION_SOUTH      = 0x10,
+    WORLD_ROTATION_SOUTH_WEST = 0x20,
+    WORLD_ROTATION_WEST       = 0x40,
+    WORLD_ROTATION_NORTH_WEST = 0x80
+  } world_rotation_t;
+
+  typedef enum
+  {
+    DIMENSION_UNDEFINED = 0,
+    DIMENSION_OVERWORLD = 1,
+    DIMENSION_NETHER    = 2,
+    DIMENSION_END       = 4
   } dimension_t;
 
   typedef struct block_info
@@ -45,16 +42,6 @@ namespace mcmap
     int data;
   } item_info;
 
-  typedef enum
-  {
-    BLOCK_FACE_TOP,
-    BLOCK_FACE_NORTH,
-    BLOCK_FACE_WEST,
-    BLOCK_FACE_SOUTH,
-    BLOCK_FACE_EAST,
-    BLOCK_FACE_BOTTOM
-  } block_face_t;
-
   typedef enum {
     ITEM_TYPE_ITEM,
     ITEM_TYPE_BLOCK
@@ -65,6 +52,18 @@ namespace mcmap
     ITEM_SUBTYPE_SLAB_TOP,
     ITEM_SUBTYPE_STAIRS
   } item_subtype_t;
+
+  typedef enum
+  {
+    BLOCK_FACE_TOP,
+    BLOCK_FACE_NORTH,
+    BLOCK_FACE_WEST,
+    BLOCK_FACE_SOUTH,
+    BLOCK_FACE_EAST,
+    BLOCK_FACE_BOTTOM
+  } block_face_t;
+
+  /* data storage structures */
 
   class texture;
   typedef struct {
@@ -116,6 +115,16 @@ namespace mcmap
     std::vector<region_t> regions;
   } dimension_data_t;
 
+  /* misc */
+
+  typedef struct 
+  {
+    int major;
+    int minor;
+    int patch;
+    char hash[10];
+  } version_t; 
+
   typedef struct 
   {
     boost::filesystem::path assetDir;
@@ -123,13 +132,14 @@ namespace mcmap
     int                     blockSize;
     world_rotation_t        direction;
     boost::filesystem::path outputDir;
-    int                     renderDimension;
+    
+    int                     renderDimensions;
     render_mode_t           renderMode;
-    bool                    renderEnd;
-    bool                    renderNether;
-    bool                    renderOverworld;
-    bool                    renderOverworldNight;
+    int                     renderOrientations;
+    
+    bool                    statisticsOnly;
     bool                    saveMapStatistics;
+
     bool                    tiledOutput;
     int                     tileSize;
     bool                    verbose;
@@ -137,20 +147,41 @@ namespace mcmap
     bool                    zoomLevels[12];
   } config_t;
 
+  /* helper functions */
+
   static inline std::string dimension2string(dimension_t dim) 
   { 
     switch (dim) 
     { 
+      case DIMENSION_UNDEFINED: return "";
+
       case DIMENSION_OVERWORLD: return "Overworld";
       case DIMENSION_NETHER:    return "Nether";
       case DIMENSION_END:       return "End";
     } 
   }
 
+  /*
+   * this converts from ingame dimension integers to our dimension type
+   */
+  static inline dimension_t int2dimension(int dim)
+  {
+    switch (dim)
+    {
+      case -1: return DIMENSION_NETHER;
+      case 0:  return DIMENSION_OVERWORLD;
+      case 1:  return DIMENSION_END;
+    }
+
+    return DIMENSION_UNDEFINED;
+  }
+
   static inline std::string dimension_storage(dimension_t dim)
   {
     switch (dim)
     {
+      case DIMENSION_UNDEFINED: return "";
+
       case DIMENSION_OVERWORLD: return "region";
       case DIMENSION_NETHER:    return "DIM-1";
       case DIMENSION_END:       return "DIM1";

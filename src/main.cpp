@@ -17,6 +17,8 @@ using namespace mcmap;
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
+namespace js = json_spirit;
+
 namespace mcmap
 {
 	config_t config;
@@ -87,12 +89,12 @@ bool load_config()
   ifstream in(p.string().c_str());
   if (in.is_open())
   {
+    // set defaults
+
     config.blockSize            = 16;
-    config.direction            = WORLD_ROTATION_SOUTH_EAST; // standard south east orientation
-    config.renderEnd            = false;
-    config.renderNether         = false;
-    config.renderOverworld      = false,
-    config.renderOverworldNight = false;
+    config.renderDimensions     = DIMENSION_OVERWORLD;
+    config.renderOrientations   = WORLD_ROTATION_NORTH_EAST;
+    config.renderMode           = RENDER_MODE_ISOMETRIC;
     config.outputDir            = fs::path("output/");
     config.saveMapStatistics    = true;
     config.tiledOutput          = false;
@@ -105,16 +107,16 @@ bool load_config()
 
     config.zoomLevels[11] = true;
 
-    json_spirit::Value cfg;
-    json_spirit::read(in, cfg);
+    js::Value cfg;
+    js::read(in, cfg);
 
-    json_spirit::Object o = cfg.get_obj();
-    for (json_spirit::Object::size_type i = 0; i != o.size(); i++)
+    js::Object o = cfg.get_obj();
+    for (js::Object::size_type i = 0; i != o.size(); i++)
     {
-      const json_spirit::Pair& pair = o[i];
+      const js::Pair& pair = o[i];
 
       const string& name  = pair.name_;
-      const json_spirit::Value& value = pair.value_;
+      const js::Value& value = pair.value_;
 
       if (name == "assetDir")
       {
@@ -136,7 +138,7 @@ bool load_config()
 
       if (name == "bounds")
       {
-        json_spirit::Array bounds = value.get_array();
+        js::Array bounds = value.get_array();
         if (bounds.size() != 4)
         {
           cerr << "Bounds has to have 4 values. Defaulting to {0, 0, 0, 0}" << endl;
@@ -146,9 +148,28 @@ bool load_config()
         }
       }
 
-      if (name == "direction")
+      if (name == "renderDimensions")
       {
-        config.direction = (world_rotation_t)value.get_int();
+        // reset
+        config.renderDimensions = 0;
+
+        js::Array renderDimensions = value.get_array();
+        for (int i = 0; i < renderDimensions.size(); ++i)
+        {
+          try
+          {
+            string dimension = renderDimensions[i].get_str();
+            
+            if (dimension == "Overworld") config.renderDimensions &= DIMENSION_OVERWORLD;
+            if (dimension == "Nether")    config.renderDimensions &= DIMENSION_NETHER;
+            if (dimension == "End")       config.renderDimensions &= DIMENSION_END;
+          } catch(exception& e)
+          {
+            // this is horribly bad error management but the only other allowed value would be int
+            int d = renderDimensions[i].get_int();
+            if (d > 0 && d < 5) config.renderDimensions &= d;
+          }
+        }
       }
 
       if (name == "outputDir")
@@ -156,29 +177,14 @@ bool load_config()
         config.outputDir = fs::path(value.get_str());
       }
 
-      if (name == "renderEnd")
-      {
-        config.renderEnd = value.get_bool();
-      }
-
-      if (name == "renderNether")
-      {
-        config.renderNether = value.get_bool();
-      }
-
-      if (name == "renderOverworld")
-      {
-        config.renderOverworld = value.get_bool();
-      }
-
-      if (name == "renderOverworldNight")
-      {
-        config.renderOverworldNight = value.get_bool();
-      }
-
       if (name == "saveMapStatistics")
       {
         config.saveMapStatistics = value.get_bool();
+      }
+
+      if (name == "statisticsOnly")
+      {
+        config.statisticsOnly = value.get_bool();
       }
 
       if (name == "tiledOutput")
@@ -198,9 +204,9 @@ bool load_config()
 
       if (name == "zoomLevels")
       {
-        json_spirit::Array zoomLevels = value.get_array();
+        js::Array zoomLevels = value.get_array();
         
-        if (zoomLevels.size() > 12)
+        if (zoomLevels.size() > 12 && config.verbose)
         {
           cerr << "You've given more zoom levels than are allowed, will only use first 12." << endl;
         }
@@ -211,15 +217,6 @@ bool load_config()
         // set
         for (int i = 0; i < 12; ++i) config.zoomLevels[i] = true;
       }
-    }
-
-    // default to overworld if no render mode was selected
-    if (!config.renderOverworld 
-    &&  !config.renderOverworldNight 
-    &&  !config.renderNether 
-    &&  !config.renderEnd)
-    {
-      config.renderOverworld = true;
     }
 
     return true;

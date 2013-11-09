@@ -42,24 +42,16 @@ namespace mcmap
     fs::create_directory(p);
     chdir(p.string().c_str());
 
-    if (config.renderOverworld) 
-    {
-      this->overworld = this->analyze_world(DIMENSION_OVERWORLD);
-      this->map(DIMENSION_OVERWORLD);
-    }
-    
-    if (config.renderNether)    
-    {
-      this->nether = this->analyze_world(DIMENSION_NETHER);
-      this->map(DIMENSION_NETHER);
-    }
-    
-    if (config.renderEnd)       
-    {
-      this->end = this->analyze_world(DIMENSION_END);
-      this->map(DIMENSION_END);
-    }
+    if (config.renderDimensions & DIMENSION_OVERWORLD)
+      this->dimensions.push_back(this->analyze_world(DIMENSION_OVERWORLD));
 
+    if (config.renderDimensions & DIMENSION_NETHER)
+      this->dimensions.push_back(this->analyze_world(DIMENSION_NETHER));
+
+    if (config.renderDimensions & DIMENSION_END)
+      this->dimensions.push_back(this->analyze_world(DIMENSION_END));
+
+    if (!config.statisticsOnly)   this->map();
     if (config.saveMapStatistics) this->save_map_statistics();
 
     return 0;
@@ -144,20 +136,27 @@ namespace mcmap
     return dimension_data;
   }
 
-  void mapper::map(dimension_t dim)
+  void mapper::map()
   {
-    dimension_data_t *dimension_data = this->get_dimension(dim);
-
-    // create and change into temp directory for dimension tiles
-    fs::path p(dimension_data->name);
-    fs::create_directory(p);
-    chdir(p.string().c_str());
-
-    for (std::vector<region_t>::iterator it = dimension_data->regions.begin(); it < dimension_data->regions.end(); ++it)
+    for (std::vector<dimension_data_t *>::iterator it = this->dimensions.begin();
+         it < this->dimensions.end(); ++it)
     {
-      region_t *current = &(*it);
-      current->map->map();
+      dimension_data_t *dim = *it;
+      
+      // create and change into temp directory for dimension tiles
+      fs::path p(dim->name);
+      fs::create_directory(p);
+      chdir(p.string().c_str());
+
+      for (std::vector<region_t>::iterator reg = dim->regions.begin(); 
+           reg < dim->regions.end(); 
+           ++reg)
+      {
+        region_t *current = &(*reg);
+        current->map->map();
+      }
     }
+
   }
 
   void mapper::save_map_statistics()
@@ -204,21 +203,15 @@ namespace mcmap
     of.close();
 
     js::Object region_statistics;
-    if (config.renderOverworld || config.renderNether || config.renderEnd)
+
+    for (std::vector<dimension_data_t *>::iterator it = this->dimensions.begin();
+         it < this->dimensions.end(); ++it)
     {
       js::Array dim;
-
-      if (config.renderOverworld)
-        dim.push_back(this->dimension_data(DIMENSION_OVERWORLD));
-
-      if (config.renderNether)
-        dim.push_back(this->dimension_data(DIMENSION_NETHER));
-
-      if (config.renderEnd)
-        dim.push_back(this->dimension_data(DIMENSION_END));
-
+      dim.push_back(this->dimension_data(*it));
       region_statistics.push_back(js::Pair("dimensions", dim));
     }
+    
 
     const char *region_filename = (this->output / "region_statistics.json").string().c_str();
     ofstream of2(region_filename, ofstream::out);
@@ -277,16 +270,8 @@ namespace mcmap
         // dimension, 0 = overworld, 1 = end, -1 = nether
         search_node = nbt_find_by_name(player_node, "Dimension");
         int dimension = search_node->payload.tag_int;
-        string dimensionName;
 
-        switch (dimension)
-        {
-          case DIMENSION_NETHER:    dimensionName = "Nether"; break;
-          case DIMENSION_OVERWORLD: dimensionName = "Overworld"; break;
-          case DIMENSION_END:       dimensionName = "End"; break;
-        }
-
-        player.push_back(js::Pair("dimension", dimensionName));
+        player.push_back(js::Pair("dimension", dimension2string(int2dimension(dimension))));
 
         /*
         // TODO: current position
@@ -304,10 +289,8 @@ namespace mcmap
     return pois;
   }
 
-  js::Object mapper::dimension_data(dimension_t dim)
+  js::Object mapper::dimension_data(dimension_data_t *dimension)
   {
-    dimension_data_t *dimension = this->get_dimension(dim);
-
     js::Object obj;
 
     obj.push_back(js::Pair("name", dimension->name));
@@ -340,19 +323,5 @@ namespace mcmap
     obj.push_back(js::Pair("overallSaturation", overall_saturation / (float)dimension->num_regions));
 
     return obj;
-  }
-
-  dimension_data_t *mapper::get_dimension(dimension_t dim)
-  {
-    dimension_data_t *dimension;
-
-    switch (dim)
-    {
-      case DIMENSION_OVERWORLD: dimension = this->overworld; break;
-      case DIMENSION_NETHER:    dimension = this->nether; break;
-      case DIMENSION_END:       dimension = this->end; break;
-    }
-
-    return dimension;
   }
 }
