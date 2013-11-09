@@ -42,7 +42,7 @@ find_package(Boost 1.53
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
-find_package(ImageMagick COMPONENTS Magick++)
+find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
 
 include_directories(${ImageMagick_INCLUDE_DIRS})
 
