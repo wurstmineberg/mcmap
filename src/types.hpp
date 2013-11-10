@@ -134,8 +134,10 @@ namespace mcmap
     boost::filesystem::path outputDir;
     
     int                     renderDimensions;
-    render_mode_t           renderMode;
+    int                     renderModes;
     int                     renderOrientations;
+
+    dimension_t             currentDimension;
     
     bool                    statisticsOnly;
     bool                    saveMapStatistics;

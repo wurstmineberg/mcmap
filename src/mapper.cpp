@@ -141,15 +141,17 @@ namespace mcmap
     for (std::vector<dimension_data_t *>::iterator it = this->dimensions.begin();
          it < this->dimensions.end(); ++it)
     {
-      dimension_data_t *dim = *it;
+      dimension_data_t *dim_data = *it;
+
+      config.currentDimension = dim_data->dimension;
       
       // create and change into temp directory for dimension tiles
-      fs::path p(dim->name);
+      fs::path p(dim_data->name);
       fs::create_directory(p);
       chdir(p.string().c_str());
 
-      for (std::vector<region_t>::iterator reg = dim->regions.begin(); 
-           reg < dim->regions.end(); 
+      for (std::vector<region_t>::iterator reg = dim_data->regions.begin(); 
+           reg < dim_data->regions.end(); 
            ++reg)
       {
         region_t *current = &(*reg);
@@ -217,6 +219,10 @@ namespace mcmap
     ofstream of2(region_filename, ofstream::out);
     js::write(region_statistics, of2, js::pretty_print);
     of2.close();
+
+
+    if (config.verbose)
+      cout << "Saved statistics to " << this->output << endl;
   }
 
   js::Object mapper::pois()

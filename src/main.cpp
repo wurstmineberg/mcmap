@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <zlib.h>
+
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
@@ -26,6 +28,7 @@ namespace mcmap
 }
 
 bool load_config();
+void discover_asset_dir();
 
 int main(int argc, char **argv)
 {
@@ -94,7 +97,7 @@ bool load_config()
     config.blockSize            = 16;
     config.renderDimensions     = DIMENSION_OVERWORLD;
     config.renderOrientations   = WORLD_ROTATION_NORTH_EAST;
-    config.renderMode           = RENDER_MODE_ISOMETRIC;
+    config.renderModes          = RENDER_MODE_ISOMETRIC;
     config.outputDir            = fs::path("output/");
     config.saveMapStatistics    = true;
     config.tiledOutput          = false;
@@ -172,6 +175,40 @@ bool load_config()
         }
       }
 
+      if (name == "renderOrientations")
+      {
+        config.renderOrientations = 0;
+
+        js::Array renderOrientations = value.get_array();
+        for (int i = 0; i < renderOrientations.size(); ++i)
+        {
+          string orientation = renderOrientations[i].get_str();
+
+          if (orientation == "N")  config.renderOrientations &= WORLD_ROTATION_NORTH;
+          if (orientation == "NE") config.renderOrientations &= WORLD_ROTATION_NORTH_EAST;
+          if (orientation == "E")  config.renderOrientations &= WORLD_ROTATION_EAST;
+          if (orientation == "SE") config.renderOrientations &= WORLD_ROTATION_SOUTH_EAST;
+          if (orientation == "S")  config.renderOrientations &= WORLD_ROTATION_SOUTH;
+          if (orientation == "SW") config.renderOrientations &= WORLD_ROTATION_SOUTH_WEST;
+          if (orientation == "W")  config.renderOrientations &= WORLD_ROTATION_WEST;
+          if (orientation == "NW") config.renderOrientations &= WORLD_ROTATION_NORTH_WEST;
+        }
+      }
+
+      if (name == "renderModes")
+      {
+        config.renderModes = 0;
+
+        js::Array renderModes = value.get_array();
+        for (int i = 0; i < renderModes.size(); ++i)
+        {
+          string renderMode = renderModes[i].get_str();
+
+          if (renderMode == "top")       config.renderModes &= RENDER_MODE_TOP;
+          if (renderMode == "isometric") config.renderModes &= RENDER_MODE_ISOMETRIC;
+        }
+      }
+
       if (name == "outputDir")
       {
         config.outputDir = fs::path(value.get_str());
@@ -219,8 +256,16 @@ bool load_config()
       }
     }
 
+    if (!fs::is_directory(config.assetDir)) discover_asset_dir();
+
     return true;
   }
   
   return false;
+}
+
+
+void discover_asset_dir()
+{
+  
 }
