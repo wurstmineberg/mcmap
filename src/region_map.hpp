@@ -17,14 +17,6 @@
 
 namespace mcmap
 {
-  typedef struct r_chunk_info
-  {
-    int offset;
-    int size;
-
-    int timestamp;
-  } r_chunk_info_t;
-
   class region_map
   {
   public:

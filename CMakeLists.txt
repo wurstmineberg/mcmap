@@ -6,6 +6,13 @@ set(mcmap_VERSION_MAJOR 0)
 set(mcmap_VERSION_MINOR 1)
 set(mcmap_VERSION_PATCH 2)
 
+exec_program(
+  "git"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ARGS "log -n1 --format=\"%h\""
+  OUTPUT_VARIABLE mcmap_VERSION_HASH 
+)
+
 set(mcmap_BASEPATH "${CMAKE_INSTALL_PREFIX}/share/mcmap")
 
 include(CheckCXXSourceCompiles src/)

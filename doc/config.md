@@ -15,16 +15,35 @@ mcmap will obey to json configuration file of the following format:
 
       "blockSize": 16,
       "outputDir": "./output/",
-      "renderEnd": false,
-      "renderNether": false,
-      "renderOverworld": true,
-      "renderOverworldNight": false,
+      "renderDimensions": ["Overworld"],
+      "renderOrientations": ["N"],
+      "renderModes": ["top"]
       "saveMapStatistics": true,
+      "statisticsOnly": false,
       "tiledOutput": true,
       "tileSize": 128,
       "world": "~/.minecraft/saves/worldsave",
       "zoomLevels": [1,4,12]
     }
+
+## Rendering Options
+
+- `renderDimensions` expects an array of the to-be-processed dimensions.
+  Dimensions can either be given as integer (-1, 0, 1) or with their
+  *official* name (Nether, Overworld, End).
+
+- `renderOrientations` expects an array of the output orientations.
+  These should be given in a compass-direction fashion, e.g. N => North, SE => South East
+  (Please be aware that not all directions apply to all render modes. S.b. for details.)
+
+- `renderModes` also expects an array for the output modes.
+  This can be **top** or **isometric**. If isometric rendering is chosen, all
+  pure orientations (e.g. N, W) are not going to be considered. Vice versa,
+  for top rendering, all the mixed orientations are not going to be considered.
+
+## `statisticsOnly`
+
+If set to true, no rendering will be done.
 
 ## `assetDir`
 

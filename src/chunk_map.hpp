@@ -18,16 +18,6 @@
 
 namespace mcmap
 {
-  typedef struct chunk_layer
-  {
-    unsigned char y;
-
-    block_info_t  blocks[4096];
-
-    char skylight[4096];
-    char blocklight[4096];
-  } chunk_layer_t;
-
   class chunk_map
   {
   public:
