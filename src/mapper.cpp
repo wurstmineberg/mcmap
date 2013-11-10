@@ -219,6 +219,10 @@ namespace mcmap
     ofstream of2(region_filename, ofstream::out);
     js::write(region_statistics, of2, js::pretty_print);
     of2.close();
+
+
+    if (config.verbose)
+      cout << "Saved statistics to " << this->output << endl;
   }
 
   js::Object mapper::pois()

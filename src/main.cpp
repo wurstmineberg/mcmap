@@ -267,5 +267,5 @@ bool load_config()
 
 void discover_asset_dir()
 {
-
+  
 }
