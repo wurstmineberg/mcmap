@@ -111,11 +111,11 @@ namespace mcmap
         chunk_layer->skylight[i] = this->calc_short(block_search_node, i);
       }
 
-      threads[i] = boost::thread(&chunk_map::render_layer, this, chunk_layer);
+      //threads[i] = boost::thread(&chunk_map::render_layer, this, chunk_layer);
     }
 
     // wait on layer processing to finish
-    for (int i = 0; i < this->num_layers; i++) threads[i].join();
+    //for (int i = 0; i < this->num_layers; i++) threads[i].join();
 
     // TODO: assemble chunk
   }
