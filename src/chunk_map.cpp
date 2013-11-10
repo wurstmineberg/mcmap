@@ -118,10 +118,6 @@ namespace mcmap
     for (int i = 0; i < this->num_layers; i++) threads[i].join();
 
     // TODO: assemble chunk
-
-    #ifdef DEBUG
-    exit(1);
-    #endif
   }
 
   void chunk_map::render_layer(chunk_layer_t *chunk_layer)
