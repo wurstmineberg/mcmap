@@ -21,6 +21,8 @@ namespace mcmap
     this->regionZ = regionZ;
 
     this->analyze();
+
+    if (config.verbose) cout << "[region] " << regionX << "." << regionZ << endl;
   }
 
   region_map::~region_map()
@@ -105,7 +107,7 @@ namespace mcmap
     free(a);
 
     fs::path p(fs::current_path() / regDirs);
-    fs::create_directories(p);
+    //fs::create_directories(p);
 
     chdir(p.string().c_str());
 
@@ -128,5 +130,7 @@ namespace mcmap
 
       free(chunk_data);
     }
+
+    chdir("..");
   }
 }

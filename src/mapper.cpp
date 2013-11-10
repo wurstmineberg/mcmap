@@ -150,6 +150,8 @@ namespace mcmap
       fs::create_directory(p);
       chdir(p.string().c_str());
 
+      if (config.verbose) cout << "Mapping dimension " << dim_data->name << endl;
+
       for (std::vector<region_t>::iterator reg = dim_data->regions.begin(); 
            reg < dim_data->regions.end(); 
            ++reg)
@@ -157,6 +159,8 @@ namespace mcmap
         region_t *current = &(*reg);
         current->map->map();
       }
+
+      chdir("..");
     }
 
   }
