@@ -98,7 +98,7 @@ bool load_config()
     config.renderDimensions     = DIMENSION_OVERWORLD;
     config.renderOrientations   = WORLD_ROTATION_NORTH_EAST;
     config.renderModes          = RENDER_MODE_ISOMETRIC;
-    config.outputDir            = fs::path("output/");
+    config.outputDir            = fs::current_path() / fs::path("output/");
     config.saveMapStatistics    = true;
     config.tiledOutput          = false;
     config.tileSize             = 128;

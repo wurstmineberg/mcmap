@@ -21,8 +21,6 @@ namespace mcmap
     this->regionZ = regionZ;
 
     this->analyze();
-
-    if (config.verbose) cout << "[region] " << regionX << "." << regionZ << endl;
   }
 
   region_map::~region_map()
@@ -97,18 +95,17 @@ namespace mcmap
 
   void region_map::map()
   {
+    if (config.verbose) cout << "Mapping region " << regionX << "." << regionZ << endl;
+
     // create and change into directory for region
-    char *a = (char *)malloc(sizeof(char) * 12);
+    char a[12];
     sprintf(a, "%d/%d", this->regionX, this->regionZ);
 
     char *regDirs = (char *)malloc(sizeof(char) * strlen(a));
     memcpy(regDirs, a, strlen(a));
 
-    free(a);
-
-    fs::path p(fs::current_path() / regDirs);
-    //fs::create_directories(p);
-
+    fs::path p(config.outputDir / "tiles_temp" / dimension2string(config.currentDimension) / regDirs);
+    fs::create_directories(p);
     chdir(p.string().c_str());
 
     free(regDirs);
