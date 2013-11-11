@@ -15,6 +15,14 @@ exec_program(
 
 set(mcmap_BASEPATH "${CMAKE_INSTALL_PREFIX}/share/mcmap")
 
+if (${UNIX}) 
+  add_definitions(-D__UNIX__) 
+endif()
+
+if (${APPLE}) 
+  add_definitions(-D__APPLE__) 
+endif()
+
 include(CheckCXXSourceCompiles src/)
 include(CheckCSourceCompiles   src/)
 
