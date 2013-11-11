@@ -8,6 +8,8 @@
 
 #include <json_spirit.h>
 
+#include <cstdlib>
+
 #include "config.hpp"
 #include "mapper.hpp"
 
@@ -31,7 +33,7 @@ namespace mcmap
 }
 
 bool load_config();
-void discover_asset_dir();
+void create_asset_dir();
 
 int main(int argc, char **argv)
 {
@@ -259,7 +261,7 @@ bool load_config()
       }
     }
 
-    if (!fs::is_directory(config.assetDir)) discover_asset_dir();
+    if (config.assetDir == "") create_asset_dir();
 
     return success;
   }
@@ -267,8 +269,91 @@ bool load_config()
   return false;
 }
 
-
-void discover_asset_dir()
+/**
+ * Try to locate a minecraft.jar and extract the assets into MCMAP_BASEPATH/assets
+ *
+ * Common minecraft paths:
+ *
+ * Linux: ~/.minecraft
+ * OS X:  ~/Library/Application Support/minecraft/
+ *
+ * assets are in jar!/resources/assets/
+ **/
+void create_asset_dir()
 {
-  
+  #ifndef __UNIX__
+    LOG4CXX_INFO(logger, "mcmap cannot auto-locate your minecraft assets.");
+    return;
+  #else
+    fs::path  cwd = fs::current_path();
+    chdir(MCMAP_BASEPATH.string().c_str());
+
+    fstream timestamp;
+    int current_stamp = 0;
+
+    if (!fs::exists("assets_timestamp"))
+    {
+      FILE *fp = fopen("assets_timestamp", "ab+");
+      fclose(fp);
+    }
+
+    timestamp.open("assets_timestamp");
+
+    timestamp.seekg(0, timestamp.end);
+    int size = timestamp.tellg();
+
+    if (size > 0) timestamp >> current_stamp;
+    cout << "current: " << current_stamp << endl;
+
+    fs::path mc_versions = fs::path(getenv("HOME"));
+    
+    #ifdef __APPLE__
+      // unix + apple => os x
+      mc_versions /= "Library/Application Support/minecraft";
+    #else
+      mc_versions /= ".minecraft";
+    #endif
+
+    mc_versions /= "versions";
+
+    fs::path latest;
+    int latest_stamp;
+    
+    try 
+    { 
+      for (fs::directory_iterator it(mc_versions); it != fs::directory_iterator(); ++it)
+      {
+        int check_stamp = fs::last_write_time(*it);
+        if (fs::is_directory(*it) && latest_stamp < check_stamp) 
+        {
+          latest_stamp = check_stamp;
+          latest = *it;
+        }
+      }
+    }
+    catch(boost::filesystem::filesystem_error &ex)
+    {
+      LOG4CXX_ERROR(logger, ex.what());
+      return;
+    }
+
+    latest /= latest.filename();
+
+    if (latest_stamp > current_stamp) 
+    {
+      LOG4CXX_INFO(logger, "Extracting (updated) assets from " << latest.string() + ".jar");
+
+      string cmd = "tar -xf \"" + latest.string() + ".jar\" assets";
+
+      system(cmd.c_str());
+
+      timestamp << latest_stamp;
+    }
+
+    timestamp.close();
+
+    chdir(cwd.string().c_str());
+
+    config.assetDir = MCMAP_BASEPATH / "assets";
+  #endif
 }
