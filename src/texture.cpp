@@ -10,7 +10,7 @@ namespace mcmap
 	{
 		this->path = new fs::path(filesystem_path.string());
 		this->rotation = rotation;
-		if (config.verbose) cout << "New texture: " << this->to_string() << endl;
+		LOG4CXX_INFO(logger, "New texture: " << this->to_string());
 	}
 
 	void texture::init_with_identifier(string identifier, texture_rotation_t rotation)
@@ -51,7 +51,7 @@ namespace mcmap
 				texture_rotation_t rotation = static_cast<texture_rotation_t>(rotation_int);
 				this->init_with_identifier(name, rotation);
 			} else {
-				cerr << "Texture with name: \"" << name << "\" has invalid rotation value: " << rotation_string << ". Defaulting to no rotation. Please fix items.json. " << endl;
+				LOG4CXX_WARN(logger, "Texture with name: \"" << name << "\" has invalid rotation value: " << rotation_string << ". Defaulting to no rotation. Please fix items.json. ");
 				this->init_with_identifier(name, TEXTURE_ROTATION_0);
 			}
 		}

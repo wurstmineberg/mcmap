@@ -218,7 +218,7 @@ namespace mcmap
 
 	item_metadata_store::item_metadata_store()
 	{
-		this->load_metadata();
+		
 	}
 
 	item_metadata *item_metadata_store::get_metadata_for_key(string key)
@@ -280,7 +280,7 @@ namespace mcmap
 	  p /= "misc/items.json";
 
 	  if (!fs::exists(p)) return false;
-	  if (config.verbose) cout << "Using items.json " << p << endl;
+	  LOG4CXX_INFO(logger, "Using items.json " << p);
 
 	  ifstream in(p.string().c_str());
 	  if (in.is_open())

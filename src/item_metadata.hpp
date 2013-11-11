@@ -38,11 +38,11 @@ namespace mcmap
 	{
 	public:
 		item_metadata_store();
+		bool load_metadata();
 		item_metadata *get_metadata(block_info_t *block_info);
 		void print_raw_data();
 
 	private:
-		bool load_metadata();
 		item_metadata *get_metadata_for_key(string key);
 		item_metadata *get_metadata_for_key(string key, item_metadata *default_metadata);
 		json_spirit::mObject json_data;

@@ -15,6 +15,7 @@
 
 using namespace std;
 using namespace mcmap;
+using namespace log4cxx;
 
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
@@ -24,6 +25,8 @@ namespace js = json_spirit;
 namespace mcmap
 {
 	config_t config;
+  log4cxx::LoggerPtr logger = Logger::getLogger("mcmap");
+
 	item_metadata_store metadata_store;
 }
 
@@ -32,6 +35,9 @@ void discover_asset_dir();
 
 int main(int argc, char **argv)
 {
+  fs::path logger_conf = fs::path(MCMAP_BASEPATH / "misc/log4cxx.properties");
+  PropertyConfigurator::configure(LOG4CXX_FILE(logger_conf.string().c_str()));
+
   po::options_description input_options("options");
   input_options.add_options()
     ("help,h", "display this help")
@@ -49,19 +55,15 @@ int main(int argc, char **argv)
 
   config.verbose = (vm.count("verbose") == 1);
 
-  if (config.verbose || vm.count("version") == 1)
+  if (vm.count("version") == 1)
   {
-    cout << "This is mcmap v." 
-         << MCMAP_VERSION.major 
-         << "." 
-         << MCMAP_VERSION.minor 
-         << "." 
-         << MCMAP_VERSION.patch 
-         << "-"
-         << MCMAP_VERSION.hash
-         << endl;
+    cout << version_string() << endl;
+    exit(0);
+  }
 
-    if (vm.count("version") == 1) exit(0);
+  if (config.verbose)
+  {
+    logger->setLevel(Level::getTrace());
   }
 
   // display simple usage output if no config was supplied
@@ -71,7 +73,7 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  metadata_store = item_metadata_store();
+  metadata_store.load_metadata();
 
   // if we got this far, everything should be fine (beware, Murphy is probably somewhere around here.)
 
@@ -87,7 +89,7 @@ bool load_config()
 
   if (!fs::exists(p)) return false;
 
-  if (config.verbose) cout << "Using config " << p << endl;
+  LOG4CXX_INFO(logger, "Loading config " << p);
 
   ifstream in(p.string().c_str());
   if (in.is_open())
@@ -109,6 +111,8 @@ bool load_config()
     config.bounds[3] = 0;
 
     config.zoomLevels[11] = true;
+
+    bool success = true;
 
     js::Value cfg;
     js::read(in, cfg);
@@ -135,7 +139,8 @@ bool load_config()
           config.blockSize = blockSize;  
         } else
         {
-          cerr << "Block size has to be a multiple of 16." << endl;
+          LOG4CXX_ERROR(logger, "Block size has to be a multiple of 16.");
+          success = false;
         }
       }
 
@@ -144,7 +149,7 @@ bool load_config()
         js::Array bounds = value.get_array();
         if (bounds.size() != 4)
         {
-          cerr << "Bounds has to have 4 values. Defaulting to {0, 0, 0, 0}" << endl;
+          LOG4CXX_WARN(logger, "Bounds has to have 4 values. Defaulting to {0, 0, 0, 0}");
         } else
         {
           for (int i = 0; i < 4; ++i) config.bounds[i] = bounds[i].get_int();
@@ -244,9 +249,7 @@ bool load_config()
         js::Array zoomLevels = value.get_array();
         
         if (zoomLevels.size() > 12 && config.verbose)
-        {
-          cerr << "You've given more zoom levels than are allowed, will only use first 12." << endl;
-        }
+          LOG4CXX_WARN(logger, "You've given more zoom levels than are allowed, will only use first 12.")
 
         // reset preset default
         config.zoomLevels[11] = false;
@@ -258,7 +261,7 @@ bool load_config()
 
     if (!fs::is_directory(config.assetDir)) discover_asset_dir();
 
-    return true;
+    return success;
   }
   
   return false;

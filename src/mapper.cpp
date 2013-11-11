@@ -20,7 +20,7 @@ namespace mcmap
     
     if (fs::is_regular_file(this->output))
     {
-      cerr << "Do you even documentation?" << endl;
+      LOG4CXX_ERROR(logger, "Do you even documentation?");
       exit(1);
     }
 
@@ -150,7 +150,7 @@ namespace mcmap
       fs::create_directory(p);
       chdir(p.string().c_str());
 
-      if (config.verbose) cout << "Mapping dimension " << dim_data->name << endl;
+      LOG4CXX_INFO(logger, "Mapping dimension " << dim_data->name);
 
       for (std::vector<region_t>::iterator reg = dim_data->regions.begin(); 
            reg < dim_data->regions.end(); 
@@ -224,9 +224,7 @@ namespace mcmap
     js::write(region_statistics, of2, js::pretty_print);
     of2.close();
 
-
-    if (config.verbose)
-      cout << "Saved statistics to " << this->output << endl;
+    LOG4CXX_INFO(logger, "Saved statistics to " << this->output);
   }
 
   js::Object mapper::pois()

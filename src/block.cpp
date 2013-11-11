@@ -12,13 +12,13 @@ namespace mcmap
 		this->metadata = metadata_store.get_metadata(&block_info);
 		if (this->metadata->get_metadata_info()->type != ITEM_TYPE_BLOCK)
 		{
-			if (config.verbose) cout << "Warning: specified item is not a block. Failing silently: " << this->metadata->get_metadata_info()->name << endl;
+			if (config.verbose) LOG4CXX_WARN(logger, "Warning: specified item is not a block. Failing silently: " << this->metadata->get_metadata_info()->name);
 		}
 
-		if (config.verbose) cout << "New block with name: " << this->metadata->get_metadata_info()->name << endl;
+		LOG4CXX_INFO(logger, "New block with name: " << this->metadata->get_metadata_info()->name);
 		texture *mytexture = this->get_texture(BLOCK_FACE_EAST);
 
-		if (config.verbose) cout << "Texture: " << mytexture->to_string() << endl;
+		LOG4CXX_INFO(logger, "Texture: " << mytexture->to_string());
 	}
 
 	block::~block()

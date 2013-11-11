@@ -95,11 +95,11 @@ namespace mcmap
 
   void region_map::map()
   {
-    if (config.verbose) cout << "Mapping region " << regionX << "." << regionZ << endl;
+    LOG4CXX_INFO(logger, "Mapping region " << regionX << "," << regionZ);
 
     // create and change into directory for region
     char a[12];
-    sprintf(a, "%d/%d", this->regionX, this->regionZ);
+    sprintf(a, "%d/%d", regionX, regionZ);
 
     char *regDirs = (char *)malloc(sizeof(char) * strlen(a));
     memcpy(regDirs, a, strlen(a));

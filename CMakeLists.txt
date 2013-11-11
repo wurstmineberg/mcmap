@@ -34,6 +34,9 @@ add_custom_target(clean-all
 check_library_exists(z    deflate     "" HAVE_ZLIB)
 find_library(png REQUIRED)
 
+add_library(log4cxx STATIC IMPORTED)
+set_property(TARGET log4cxx PROPERTY IMPORTED_LOCATION "/usr/local/lib/liblog4cxx.a")
+
 set(Boost_REALPATH ON)
 find_package(Boost 1.53
   COMPONENTS
@@ -87,10 +90,13 @@ include_directories("${PROJECT_BINARY_DIR}")
 add_executable(mcmap ${SOURCES})
 
 target_link_libraries(mcmap 
-  png 
+  apr-1
+  aprutil-1
   z 
+  png 
   json_spirit
   nbt
+  log4cxx
   ${ImageMagick_LIBRARIES}
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
@@ -109,4 +115,4 @@ endif()
 add_dependencies(mcmap nbt json_spirit)
 
 install(TARGETS mcmap RUNTIME DESTINATION bin)
-install(DIRECTORY misc DESTINATION share/mcmap FILES_MATCHING PATTERN *.json)
+install(DIRECTORY misc DESTINATION share/mcmap)

@@ -1,6 +1,14 @@
 #ifndef __types_hpp
 #define __types_hpp
 
+#include <string>
+
+#include <boost/filesystem.hpp>
+
+#include <log4cxx/logger.h>
+#include <log4cxx/propertyconfigurator.h>
+#include <log4cxx/helpers/exception.h>
+
 namespace mcmap
 {
   /* basic data types */
@@ -148,6 +156,10 @@ namespace mcmap
     boost::filesystem::path worldPath;
     bool                    zoomLevels[12];
   } config_t;
+
+  /* external objects and structs */
+  extern config_t config;
+  extern log4cxx::LoggerPtr logger;
 
   /* helper functions */
 

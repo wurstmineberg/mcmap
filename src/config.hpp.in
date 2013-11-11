@@ -1,16 +1,12 @@
 #ifndef __config_hpp
 #define __config_hpp
 
-#include <string>
-
-#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "types.hpp"
 
 namespace mcmap
 {
-  extern config_t config;
-
   const version_t MCMAP_VERSION = 
   {
     @mcmap_VERSION_MAJOR@, 
@@ -18,6 +14,18 @@ namespace mcmap
     @mcmap_VERSION_PATCH@, 
     "@mcmap_VERSION_HASH@"
   };
+
+  static inline std::string version_string()
+  {
+    return "This is mcmap v." 
+         + boost::lexical_cast<std::string>(MCMAP_VERSION.major) 
+         + "." 
+         + boost::lexical_cast<std::string>(MCMAP_VERSION.minor) 
+         + "." 
+         + boost::lexical_cast<std::string>(MCMAP_VERSION.patch) 
+         + "-"
+         + MCMAP_VERSION.hash;
+  }
 
   const boost::filesystem::path MCMAP_BASEPATH("@mcmap_BASEPATH@");
 }
