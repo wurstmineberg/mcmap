@@ -67,7 +67,7 @@ namespace mcmap
     search_node = nbt_find_by_name(this->data, "Sections");
     this->num_layers = list_length(&search_node->payload.tag_list->entry);
 
-    boost::thread *threads = (boost::thread *)malloc(sizeof(boost::thread) * this->num_layers);
+    vector<boost::thread *> threads;
     this->layers = (chunk_layer_t *)malloc(sizeof(chunk_layer_t) * this->num_layers);
 
     for (int i = 0; i< this->num_layers; i++)
@@ -111,11 +111,12 @@ namespace mcmap
         chunk_layer->skylight[i] = this->calc_short(block_search_node, i);
       }
 
-      //threads[i] = boost::thread(&chunk_map::render_layer, this, chunk_layer);
+      boost::thread th = boost::thread(&chunk_map::render_layer, this, chunk_layer);
+      threads.push_back(&th);
     }
 
     // wait on layer processing to finish
-    //for (int i = 0; i < this->num_layers; i++) threads[i].join();
+    for (int i = 0; i < this->num_layers; i++) threads.at(i)->join();
 
     // TODO: assemble chunk
   }
