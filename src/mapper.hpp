@@ -30,6 +30,7 @@ namespace mcmap
     void save_map_statistics();
     
     json_spirit::Object pois();
+    json_spirit::Object player_data(std::string name, nbt_node *player_node);
     json_spirit::Object dimension_data(dimension_data_t *dimension);
 
     nbt_node* level_dat;

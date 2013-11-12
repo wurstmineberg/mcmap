@@ -253,48 +253,63 @@ namespace mcmap
       if (it->path().extension() == ".dat")
       {
         nbt_node *player_node = nbt_parse_path(it->path().string().c_str());
-        js::Object player;
-        player.push_back(js::Pair("name", it->path().stem().string()));
-
-        /*
-        // FIXME: this always segfaults and I don't get why
-
-        js::Array playerSpawn;
-        
-        search_node = nbt_find_by_name(player_node, "SpawnX");
-        playerSpawn.push_back(n->payload.tag_int);
-
-        //playerSpawn.push_back(search_node->payload.tag_int);
-
-        //search_node = nbt_find_by_name(player_node, "SpawnY");
-        //playerSpawn.push_back(search_node->payload.tag_int);
-
-        //search_node = nbt_find_by_name(player_node, "SpawnZ");
-        //playerSpawn.push_back(search_node->payload.tag_int);
-
-        player.push_back(js::Pair("spawn", playerSpawn));
-        */
-
-        // dimension, 0 = overworld, 1 = end, -1 = nether
-        search_node = nbt_find_by_name(player_node, "Dimension");
-        int dimension = search_node->payload.tag_int;
-
-        player.push_back(js::Pair("dimension", dimension2string(int2dimension(dimension))));
-
-        /*
-        // TODO: current position
-        js::Array pos;
-        nbt_node *pos_node = nbt_find_by_name(player_node, "pos");
-        struct nbt_list *pos_list = (struct nbt_list *)pos_node->payload.tag_list;
-        */
-
-        player_positions.push_back(player);
+        player_positions.push_back(player_data(it->path().stem().string(), player_node));
+        nbt_free(player_node);
       }
     }
 
     pois.push_back(js::Pair("players", player_positions));
 
     return pois;
+  }
+
+  js::Object mapper::player_data(string name, nbt_node *player_node)
+  {
+    js::Object player;
+    js::Array spawn;
+
+    nbt_node *search_node;
+
+    player.push_back(js::Pair("name", name));
+    
+    search_node = nbt_find_by_name(player_node, "SpawnX");
+    if (search_node == NULL)
+    {
+      spawn.push_back("Player does not seem to have a spawn set.");
+    } else
+    {
+      spawn.push_back(search_node->payload.tag_int);  
+
+      search_node = nbt_find_by_name(player_node, "SpawnY");
+      spawn.push_back(search_node->payload.tag_int);
+
+      search_node = nbt_find_by_name(player_node, "SpawnZ");
+      spawn.push_back(search_node->payload.tag_int);
+    }    
+
+    player.push_back(js::Pair("spawn", spawn));
+
+    // dimension, 0 = overworld, 1 = end, -1 = nether
+    search_node = nbt_find_by_name(player_node, "Dimension");
+    int dimension = search_node->payload.tag_int;
+
+    player.push_back(js::Pair("dimension", dimension2string(int2dimension(dimension))));
+
+    /*
+    FIXME: now that spawn position works, current position fails. so obvious.
+
+    js::Array pos;
+    nbt_node *pos_node = nbt_find_by_name(player_node, "pos");
+    for (int i = 0; i < 3; i++)
+    {
+      nbt_node *c = nbt_list_item(pos_node, i);
+      pos.push_back(c->payload.tag_int);
+    }
+    
+    player.push_back(js::Pair("position", pos));
+    */
+
+    return player;
   }
 
   js::Object mapper::dimension_data(dimension_data_t *dimension)

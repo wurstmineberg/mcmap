@@ -303,7 +303,6 @@ void create_asset_dir()
     int size = timestamp.tellg();
 
     if (size > 0) timestamp >> current_stamp;
-    cout << "current: " << current_stamp << endl;
 
     fs::path mc_versions = fs::path(getenv("HOME"));
     
