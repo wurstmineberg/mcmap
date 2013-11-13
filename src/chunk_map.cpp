@@ -7,6 +7,8 @@
 
 #include "block_layer.hpp"
 
+#define IN_LAYER(y, layer_y) (y > (layerY * 16) && y < ((layerY + 16) * 16))
+
 using namespace std;
 
 namespace mcmap
@@ -14,11 +16,6 @@ namespace mcmap
   chunk_map::chunk_map(void *chunk_data)
   {
     this->data = this->load(chunk_data);
-
-    // calculate width and height based on config
-    // FIXME: these values are probably wrong.
-    this->width  = 15 * config.blockSize;
-    this->height = 255 * (config.blockSize / 2) + config.blockSize;
   }  
 
   nbt_node *chunk_map::load(void *chunk_data)
@@ -51,11 +48,17 @@ namespace mcmap
     search_node = nbt_find_by_name(this->data, "zPos");
     this->chunkZ = search_node->payload.tag_int;
     
-    // biome data
-    search_node = nbt_find_by_name(this->data, "Biomes");
-    for (int i = 0; i < search_node->payload.tag_byte_array.length; i++)
+    // biome and height map data
+    nbt_node *biomes = nbt_find_by_name(this->data, "Biomes");
+    nbt_node *height = nbt_find_by_name(this->data, "HeightMap");
+
+    for (int i = 0; i < 255; i++)
     {
-      this->biome[i] = search_node->payload.tag_byte_array.data[i];
+      int z = i % 16;
+      int x = (i + 1) % 16;
+
+      this->biome[x][z]  = biomes->payload.tag_byte_array.data[i];
+      this->height[x][z] = height->payload.tag_int_array.data[i];
     }
 
     // number of entities
@@ -133,7 +136,7 @@ namespace mcmap
 
   void chunk_map::render_layer(chunk_layer_t *chunk_layer)
   {
-    if (config.renderModes & RENDER_MODE_TOP)
+    if (config.renderModes & RENDER_MODE_TOP && chunk_layer->has_top_blocks)
     {
       // do north top render, apply requested orientations on render
     }

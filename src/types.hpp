@@ -108,6 +108,8 @@ namespace mcmap
 
     char skylight[4096];
     char blocklight[4096];
+
+    bool has_top_blocks;
   } chunk_layer_t;
 
   typedef struct dimension_data

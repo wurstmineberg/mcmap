@@ -37,12 +37,9 @@ namespace mcmap
     int chunkX;
     int chunkZ;
 
-    int width;
-    int height;
-
     // biome is hex, just remember that; coordinates are x, z
-    char biome[256];
-    int  heightmap[16][16];
+    char biome[16][16];
+    int  height[16][16];
 
     int num_entities;
     int num_layers;
