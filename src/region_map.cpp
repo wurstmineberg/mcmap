@@ -20,6 +20,8 @@ namespace mcmap
     this->regionX = regionX;
     this->regionZ = regionZ;
 
+    for (int i = 0; i < CHUNKS_PER_REGION; i++) this->entity_map[i] = 0;
+
     this->analyze();
   }
 
@@ -91,6 +93,12 @@ namespace mcmap
   float region_map::saturation()
   {
     return (float)this->chunk_infos.size() / (float)CHUNKS_PER_REGION;
+  }
+
+  // number of entities in each chunk, chunks are in x z x z sorting
+  int *region_map::entities()
+  {
+    return this->entity_map;
   }
 
   void region_map::map()

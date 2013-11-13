@@ -221,7 +221,7 @@ namespace mcmap
 
     const char *region_filename = (this->output / "region_statistics.json").string().c_str();
     ofstream of2(region_filename, ofstream::out);
-    js::write(region_statistics, of2, js::pretty_print);
+    js::write(region_statistics, of2, js::pretty_print | js::single_line_arrays);
     of2.close();
 
     LOG4CXX_INFO(logger, "Saved statistics to " << this->output);
@@ -335,6 +335,11 @@ namespace mcmap
       region.push_back(js::Pair("regionZ", current->regionZ));
 
       region.push_back(js::Pair("saturation", current->map->saturation()));
+
+      js::Array ent;
+      int *entp = current->map->entities();
+      for (int i = 0; i < CHUNKS_PER_REGION; i++) ent.push_back(entp[i]);
+      region.push_back(js::Pair("entities", ent));
 
       overall_saturation += current->map->saturation();
 

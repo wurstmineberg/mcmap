@@ -24,6 +24,8 @@ namespace mcmap
     ~region_map();
 
     float saturation();
+    int  *entities();
+
     void  map();
 
   private:
@@ -40,7 +42,7 @@ namespace mcmap
     int regionZ;
 
     // number of entities per chunk
-    int entity_map[1024];
+    int entity_map[CHUNKS_PER_REGION];
   };
 }
 
