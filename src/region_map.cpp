@@ -125,6 +125,8 @@ namespace mcmap
       chunk_map cm(chunk_data);
       cm.map();
 
+      this->entity_map[(*it)->offset] = cm.entities_count();
+
       free(chunk_data);
     }
 

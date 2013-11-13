@@ -5,6 +5,8 @@
 #include <cstring>
 #include <stdint.h>
 
+#include "block_layer.hpp"
+
 using namespace std;
 
 namespace mcmap
@@ -88,13 +90,16 @@ namespace mcmap
        * block data is stored in yzx 
        * => (y * 16 + z) * 16 + x
        **/
-      int x,y,z;
       for (int i = 0; i < 4096; i++)
       {
-        // NOTE: the coordinates are not really needed here but maybe we can verwurs the
+        /*
+        // NOTE: the coordinates are not really needed here but maybe we can verwurst them for some statistics
+        int x,y,z;
+
         y = (i - (i % 3)) % 16;
         z = ((i - (i % 3)) + 1) % 16;
         x = ((i - (i % 3)) + 2) % 16;
+        */
 
         nbt_node *block_search_node = nbt_find_by_name(layer_node, "Blocks");
 
@@ -121,9 +126,22 @@ namespace mcmap
     // TODO: assemble chunk
   }
 
+  int chunk_map::entities_count()
+  {
+    return this->num_entities;
+  }
+
   void chunk_map::render_layer(chunk_layer_t *chunk_layer)
   {
-    // TODO: implement
+    if (config.renderModes & RENDER_MODE_TOP)
+    {
+      // do north top render, apply requested orientations on render
+    }
+
+    if (config.renderModes & RENDER_MODE_ISOMETRIC)
+    {
+      // do isometric render for each orientation
+    }
   }
 
   char chunk_map::calc_short(nbt_node *byte_array_node, int i)

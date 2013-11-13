@@ -24,6 +24,7 @@ namespace mcmap
     chunk_map(void *chunk_data);
 
     void map();
+    int  entities_count();
 
   private:
     nbt_node *load(void *chunk_data);
@@ -41,6 +42,7 @@ namespace mcmap
 
     // biome is hex, just remember that; coordinates are x, z
     char biome[256];
+    int  heightmap[16][16];
 
     int num_entities;
     int num_layers;

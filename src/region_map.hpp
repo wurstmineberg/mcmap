@@ -38,6 +38,9 @@ namespace mcmap
 
     int regionX;
     int regionZ;
+
+    // number of entities per chunk
+    int entity_map[1024];
   };
 }
 
