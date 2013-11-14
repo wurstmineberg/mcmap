@@ -127,3 +127,4 @@ add_dependencies(mcmap nbt json_spirit)
 
 install(TARGETS mcmap RUNTIME DESTINATION bin)
 install(DIRECTORY misc DESTINATION share/mcmap)
+install(DIRECTORY doc DESTINATION share/mcmap)
