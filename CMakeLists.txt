@@ -74,7 +74,7 @@ link_directories("/usr/local/lib"
 
 add_subdirectory("vendor/cNBT")
 
-set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -Wno-unneeded-internal-declaration -Wno-c++11-extensions")
+set(CMAKE_CXX_FLAGS "-Os -Wall -pedantic -Wno-unneeded-internal-declaration -Wno-c++11-extensions -ffast-math")
 set(CMAKE_C_FLAGS "-Os -Wall -pedantic -std=c99")
 add_subdirectory("vendor/json-spirit")
 
