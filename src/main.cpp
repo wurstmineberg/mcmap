@@ -32,7 +32,7 @@ namespace mcmap
 	item_metadata_store metadata_store;
 }
 
-bool load_config();
+bool load_config(fs::path config_path);
 void create_asset_dir();
 
 int main(int argc, char **argv)
@@ -42,7 +42,9 @@ int main(int argc, char **argv)
 
   po::options_description input_options("options");
   input_options.add_options()
+    ("config,c", po::value<string>(), "use given config file instead of looking for mcmap.json in the current working directory")
     ("help,h", "display this help")
+    ("help-config", "display help about the configuration files")
     ("verbose,v", "enable verbose output")
     ("version", "display version information and quit");
 
@@ -68,12 +70,35 @@ int main(int argc, char **argv)
     logger->setLevel(Level::getTrace());
   }
 
-  // display simple usage output if no config was supplied
-  if (!load_config())
+  if (vm.count("help-config"))
   {
-    cout << "usage:\n\t " << argv[0] << " [-vh]" << endl;
+    ifstream confighelp;
+    confighelp.open((fs::path(MCMAP_BASEPATH / "doc/config.md")).string().c_str());
+
+    while (!confighelp.eof()) 
+    {
+      char line[512];
+      confighelp.getline(line, 512);
+      cout << line << endl;
+    }
+    
+    confighelp.close();
+
     return 0;
   }
+
+  fs::path config_path = fs::current_path() / "mcmap.json";
+  if (vm.count("config")) config_path = fs::path(vm["config"].as<string>());
+
+  if (!fs::exists(config_path))
+  {
+    cout << "usage:\n\t " << argv[0] << " [-c mcmap.json] [-vh]" << endl;
+    return 0;
+  } else if (!load_config(config_path))
+  {
+    LOG4CXX_ERROR(logger, "failed to read config from " << config_path << endl);
+    return 0;
+  };
 
   metadata_store.load_metadata();
 
@@ -83,17 +108,12 @@ int main(int argc, char **argv)
   return m->work();
 }
 
-bool load_config()
+bool load_config(fs::path config_path)
 {
   // load json config
-  fs::path p(fs::current_path());
-  p /= "mcmap.json";
+  LOG4CXX_INFO(logger, "Loading config " << config_path);
 
-  if (!fs::exists(p)) return false;
-
-  LOG4CXX_INFO(logger, "Loading config " << p);
-
-  ifstream in(p.string().c_str());
+  ifstream in(config_path.string().c_str());
   if (in.is_open())
   {
     // set defaults
@@ -106,7 +126,7 @@ bool load_config()
     config.saveMapStatistics    = true;
     config.tiledOutput          = false;
     config.tileSize             = 128;
-    
+
     config.bounds[0] = 0;
     config.bounds[1] = 0;
     config.bounds[2] = 0;

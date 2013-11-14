@@ -28,6 +28,8 @@ namespace mcmap
     {
       fs::create_directory(this->output);
     }
+
+    LOG4CXX_INFO(logger, "Loading world " << config.worldPath);
   }
 
   mapper::~mapper()
@@ -220,7 +222,7 @@ namespace mcmap
 
 
     // save json for main stats
-    const char *filename = (this->output / "map_statistics.json").string().c_str();
+    const char *filename = (config.outputDir / "map_statistics.json").string().c_str();
     ofstream of(filename, ofstream::out);
     js::write(statistics, of, js::pretty_print);
     of.close();
@@ -236,12 +238,12 @@ namespace mcmap
     }
     
 
-    const char *region_filename = (this->output / "region_statistics.json").string().c_str();
+    const char *region_filename = (config.outputDir / "region_statistics.json").string().c_str();
     ofstream of2(region_filename, ofstream::out);
     js::write(region_statistics, of2, js::pretty_print | js::single_line_arrays);
     of2.close();
 
-    LOG4CXX_INFO(logger, "Saved statistics to " << this->output);
+    LOG4CXX_INFO(logger, "Saved statistics to " << config.outputDir);
   }
 
   js::Object mapper::pois()
@@ -359,10 +361,14 @@ namespace mcmap
 
       region.push_back(js::Pair("saturation", current->map->saturation()));
 
-      js::Array ent;
-      int *entp = current->map->entities();
-      for (int i = 0; i < CHUNKS_PER_REGION; i++) ent.push_back(entp[i]);
-      region.push_back(js::Pair("entities", ent));
+      // entities are not processed yet in statistics only mode
+      if (!config.statisticsOnly)
+      {
+        js::Array ent;
+        int *entp = current->map->entities();
+        for (int i = 0; i < CHUNKS_PER_REGION; i++) ent.push_back(entp[i]);
+        region.push_back(js::Pair("entities", ent));
+      }
 
       overall_saturation += current->map->saturation();
 
