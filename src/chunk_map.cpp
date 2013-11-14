@@ -106,8 +106,14 @@ namespace mcmap
 
         nbt_node *block_search_node = nbt_find_by_name(layer_node, "Blocks");
 
-        // TODO: implement support for full range of block_ids
         chunk_layer->blocks[i].id = (int)(block_search_node->payload.tag_byte_array.data[i]);
+
+        block_search_node = nbt_find_by_name(layer_node, "Add");
+        if (block_search_node)
+        {
+          char add = block_search_node->payload.tag_byte_array.data[i];
+          chunk_layer->blocks[i].id += (i % 2 == 0) ? LO_NIBBLE(add << 8) : HI_NIBBLE(add << 8); 
+        }
 
         block_search_node = nbt_find_by_name(layer_node, "Data");
         chunk_layer->blocks[i].data = this->calc_short(block_search_node, i);
