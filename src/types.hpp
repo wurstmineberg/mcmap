@@ -199,8 +199,8 @@ namespace mcmap
       case DIMENSION_UNDEFINED: return "";
 
       case DIMENSION_OVERWORLD: return "region";
-      case DIMENSION_NETHER:    return "DIM-1";
-      case DIMENSION_END:       return "DIM1";
+      case DIMENSION_NETHER:    return "DIM-1/region";
+      case DIMENSION_END:       return "DIM1/region";
     }
   }
 }

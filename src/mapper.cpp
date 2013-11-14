@@ -67,6 +67,16 @@ namespace mcmap
     dimension_data->dimension   = dim;
     dimension_data->num_regions = 0;
 
+    if (!fs::is_directory(regions_path))
+    {
+      LOG4CXX_INFO(logger, "Dimension " << dimension2string(dim) << " is empty.");
+
+      // remove dimension from config to prevent further processing
+      config.renderDimensions = dim & ~config.renderDimensions;
+
+      return dimension_data;
+    }
+
     int max_x = 1,  max_z = 1;
     int min_x = -1, min_z = -1;
 
@@ -146,7 +156,7 @@ namespace mcmap
       if (dim_data->num_regions == 0)
       {
         // don't even start to map a dimension which has no regions
-        LOG4CXX_INFO(logger, "Dimension " << dim_data->name << " has no regions.");
+        // (should not happen anymore)
         continue;
       }
 
