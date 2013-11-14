@@ -142,6 +142,13 @@ namespace mcmap
          it < this->dimensions.end(); ++it)
     {
       dimension_data_t *dim_data = *it;
+      
+      if (dim_data->num_regions == 0)
+      {
+        // don't even start to map a dimension which has no regions
+        LOG4CXX_INFO(logger, "Dimension " << dim_data->name << " has no regions.");
+        continue;
+      }
 
       config.currentDimension = dim_data->dimension;
       
@@ -319,6 +326,12 @@ namespace mcmap
     obj.push_back(js::Pair("name", dimension->name));
     
     obj.push_back(js::Pair("num_regions", dimension->num_regions));
+
+    /**
+     * since all information apart name and region count is faulty for empty 
+     * dimension, only those are returned.
+     **/
+    if (dimension->num_regions == 0) return obj;
 
     obj.push_back(js::Pair("max_x_extent", dimension->max_x_extent));
     obj.push_back(js::Pair("max_y_extent", dimension->max_z_extent));

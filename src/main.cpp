@@ -170,9 +170,9 @@ bool load_config()
           {
             string dimension = renderDimensions[i].get_str();
             
-            if (dimension == "Overworld") config.renderDimensions &= DIMENSION_OVERWORLD;
-            if (dimension == "Nether")    config.renderDimensions &= DIMENSION_NETHER;
-            if (dimension == "End")       config.renderDimensions &= DIMENSION_END;
+            if (dimension == "Overworld") config.renderDimensions |= DIMENSION_OVERWORLD;
+            if (dimension == "Nether")    config.renderDimensions |= DIMENSION_NETHER;
+            if (dimension == "End")       config.renderDimensions |= DIMENSION_END;
           } catch(exception& e)
           {
             // this is horribly bad error management but the only other allowed value would be int
@@ -191,14 +191,14 @@ bool load_config()
         {
           string orientation = renderOrientations[i].get_str();
 
-          if (orientation == "N")  config.renderOrientations &= WORLD_ROTATION_NORTH;
-          if (orientation == "NE") config.renderOrientations &= WORLD_ROTATION_NORTH_EAST;
-          if (orientation == "E")  config.renderOrientations &= WORLD_ROTATION_EAST;
-          if (orientation == "SE") config.renderOrientations &= WORLD_ROTATION_SOUTH_EAST;
-          if (orientation == "S")  config.renderOrientations &= WORLD_ROTATION_SOUTH;
-          if (orientation == "SW") config.renderOrientations &= WORLD_ROTATION_SOUTH_WEST;
-          if (orientation == "W")  config.renderOrientations &= WORLD_ROTATION_WEST;
-          if (orientation == "NW") config.renderOrientations &= WORLD_ROTATION_NORTH_WEST;
+          if (orientation == "N")  config.renderOrientations |= WORLD_ROTATION_NORTH;
+          if (orientation == "NE") config.renderOrientations |= WORLD_ROTATION_NORTH_EAST;
+          if (orientation == "E")  config.renderOrientations |= WORLD_ROTATION_EAST;
+          if (orientation == "SE") config.renderOrientations |= WORLD_ROTATION_SOUTH_EAST;
+          if (orientation == "S")  config.renderOrientations |= WORLD_ROTATION_SOUTH;
+          if (orientation == "SW") config.renderOrientations |= WORLD_ROTATION_SOUTH_WEST;
+          if (orientation == "W")  config.renderOrientations |= WORLD_ROTATION_WEST;
+          if (orientation == "NW") config.renderOrientations |= WORLD_ROTATION_NORTH_WEST;
         }
       }
 
@@ -211,8 +211,8 @@ bool load_config()
         {
           string renderMode = renderModes[i].get_str();
 
-          if (renderMode == "top")       config.renderModes &= RENDER_MODE_TOP;
-          if (renderMode == "isometric") config.renderModes &= RENDER_MODE_ISOMETRIC;
+          if (renderMode == "top")       config.renderModes |= RENDER_MODE_TOP;
+          if (renderMode == "isometric") config.renderModes |= RENDER_MODE_ISOMETRIC;
         }
       }
 
